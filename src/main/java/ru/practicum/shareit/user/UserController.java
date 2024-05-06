@@ -16,11 +16,11 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-//    @GetMapping
-//    public Collection<User> getAllUsers() {
-//        log.info("GET request to fetch collection of users received.");
-//        return userService.getAllUsers();
-//    }
+    @GetMapping
+    public Collection<User> getAllUsers() {
+        log.info("GET request to fetch collection of users received.");
+        return userService.getAllUsers();
+    }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id") Integer id) {
@@ -29,12 +29,11 @@ public class UserController {
     }
 
 
-//    @PostMapping
-//    public User createUser(@Valid @RequestBody User user) {
-//        log.info("POST request to create {} received.", user);
-//        validateUser(user);
-//        User createdUser = userService.createUser(user);
-//        log.info("{} was created", user);
-//        return createdUser;
-//    }
+    @PostMapping
+    public User createUser(@Valid @RequestBody User user) {
+        log.info("POST request to create {} received.", user);
+        User createdUser = userService.createUser(user);
+        log.info("{} was created", user);
+        return createdUser;
+    }
 }
