@@ -29,7 +29,7 @@ public class ItemServiceImpl implements ItemService {
         return itemStorage.saveItem(item);
     }
 
-    public Item updateItem(Integer itemId, Integer userId, ItemDto itemDto)  {
+    public Item updateItem(Integer itemId, Integer userId, ItemDto itemDto) {
         Item itemForUpdate = itemStorage.getItemById(itemId).orElseThrow(
                 () -> new ItemNotFoundException(MessageFormat.format("Item with id {0} not found", itemId)));
         userStorage.getUserById(userId).orElseThrow(() ->
@@ -59,8 +59,8 @@ public class ItemServiceImpl implements ItemService {
 
     public Item getItemById(Integer itemId) {
         return itemStorage.getItemById(itemId).orElseThrow(() ->
-                        new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
-                );
+                new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
+        );
     }
 
     public Collection<Item> getAllUserItems(Integer userId) {
