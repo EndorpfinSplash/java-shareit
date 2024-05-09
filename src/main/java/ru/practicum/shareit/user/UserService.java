@@ -22,14 +22,14 @@ public class UserService {
         return userStorage.saveUser(user);
     }
 
-    public User updateUser(User user) {
-        return userStorage.updateUser(user).orElseThrow(
-                () -> new UserNotFoundException(String.format("User with id=%s absent", user.getId()))
+    public User updateUser(Integer userId, User user) {
+        return userStorage.updateUser(userId, user).orElseThrow(
+                () -> new UserNotFoundException(String.format("User with id=%s absent", userId))
         );
     }
 
-    public User getUserById(Integer id) {
-        return userStorage.getUserById(id)
-                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with id={0} not found", id)));
+    public User getUserById(Integer userId) {
+        return userStorage.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with userId={0} not found", userId)));
     }
 }

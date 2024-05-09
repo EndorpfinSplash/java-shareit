@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.List;
 
 
 @RestController
@@ -35,5 +34,11 @@ public class UserController {
         User createdUser = userService.createUser(user);
         log.info("{} was created", user);
         return createdUser;
+    }
+
+    @PatchMapping("/{id}")
+    public User updateUser(@PathVariable("id") Integer id, @Valid @RequestBody User user) {
+        log.info("PATCH request to update user_id={} received.", id);
+        return userService.updateUser(id, user);
     }
 }

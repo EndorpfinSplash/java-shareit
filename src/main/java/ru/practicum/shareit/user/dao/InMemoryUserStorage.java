@@ -30,8 +30,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> updateUser(User user) {
-        Integer userId = user.getId();
+    public Optional<User> updateUser(Integer userId, User user) {
         if (users.containsKey(userId)) {
             users.put(userId, user);
             return Optional.of(user);

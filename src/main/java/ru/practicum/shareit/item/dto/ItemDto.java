@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class ItemDto {
     private String name;
     private String description;
-    private Boolean available;
+    private String bookingStatus;
     private Integer requestId;
 }

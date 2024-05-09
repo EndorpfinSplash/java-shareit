@@ -18,17 +18,16 @@ public class ItemController {
 
 
     @PostMapping
-    public Item createItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                           @RequestBody ItemDto itemDto) {
+    public Item createItem(@RequestBody ItemDto itemDto,
+                           @RequestHeader("X-Sharer-User-Id") Integer userId
+    ) {
         log.info("POST request to create {} item.", itemDto);
         Item createdItem = itemService.createItem(userId, itemDto);
         log.info("{} was created", createdItem);
         return createdItem;
     }
 
-    /**
-     * Редактировать вещь может только её владелец.
-     */
+
     @PatchMapping("/{itemId}")
     public Item updateItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
                            @RequestBody ItemDto itemDto,
@@ -48,7 +47,7 @@ public class ItemController {
 
     @GetMapping
     public Collection<Item> getAllUserItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
-    log.info("GET request to get all items from user {}", userId);
+        log.info("GET request to get all items from user {}", userId);
         return itemService.getAllUserItems(userId);
     }
 

@@ -31,6 +31,14 @@ public class ApplicationExceptionHandler {
         return new ErrorResponse("Not found exception", e.getMessage());
     }
 
+    @ExceptionHandler({
+            ItemCouldntBeModified.class
+    })
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse catchCouldNotModifiedItem(final RuntimeException e) {
+        return new ErrorResponse("You can not modify this item", e.getMessage());
+    }
+
 //        @ExceptionHandler
 //        @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 //        public ErrorResponse catchValidation(final RuntimeException e) {
