@@ -21,6 +21,7 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler({
             UserNotFoundException.class,
+            ItemNotFoundException.class,
 //                FilmNotFoundException.class,
 //                MpaNotFoundException.class,
 //                GenreNotFoundException.class
