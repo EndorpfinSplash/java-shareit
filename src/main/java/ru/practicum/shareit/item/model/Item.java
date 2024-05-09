@@ -5,6 +5,8 @@ import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
+import javax.validation.constraints.NotNull;
+
 
 @Data
 @Getter
@@ -13,8 +15,10 @@ import ru.practicum.shareit.user.User;
 @NoArgsConstructor
 public class Item {
     private Integer id;
+    @NotNull
     private String name;
     private String description;
+    @NotNull
     private Boolean available;
     private User owner;
     private ItemRequest request;

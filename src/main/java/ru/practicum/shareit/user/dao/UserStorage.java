@@ -14,4 +14,7 @@ public interface UserStorage {
 
     Optional<User> getUserById(Integer id);
 
+    void checkEmailUniqueness(Integer userId, String email);
+
+    void deleteUserById(Integer id);
 }

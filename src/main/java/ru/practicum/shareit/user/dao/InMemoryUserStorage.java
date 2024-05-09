@@ -2,12 +2,10 @@ package ru.practicum.shareit.user.dao;
 
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.NonUniqueEmail;
 import ru.practicum.shareit.user.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Repository
@@ -23,6 +21,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User saveUser(User user) {
+        checkEmailUniqueness(user.getId(), user.getEmail());
         user.setId(idCounter);
         users.put(user.getId(), user);
         idCounter++;
@@ -32,6 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public Optional<User> updateUser(Integer userId, User user) {
         if (users.containsKey(userId)) {
+            user.setId(userId);
             users.put(userId, user);
             return Optional.of(user);
         }
@@ -40,8 +40,23 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public Optional<User> getUserById(Integer id) {
-        return Optional.of(users.get(id));
+        return Optional.ofNullable(users.get(id));
     }
 
+
+    public void checkEmailUniqueness(Integer userId, String email) {
+        if (users.values().stream()
+                .filter(user -> !Objects.equals(user.getId(), userId))
+                .map(User::getEmail)
+                .filter(email::equals)
+                .findFirst().orElse(null) != null) {
+            throw new NonUniqueEmail(String.format("Email = %s address already in use", email));
+        }
+    }
+
+    @Override
+    public void deleteUserById(Integer id) {
+        users.remove(id);
+    }
 }
 

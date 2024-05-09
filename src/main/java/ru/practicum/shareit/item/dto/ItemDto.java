@@ -13,6 +13,5 @@ import lombok.NoArgsConstructor;
 public class ItemDto {
     private String name;
     private String description;
-    private String bookingStatus;
-    private Integer requestId;
+    private Boolean available;
 }

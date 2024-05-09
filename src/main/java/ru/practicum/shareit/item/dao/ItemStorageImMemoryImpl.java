@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class ItemStorageImMemoryImpl implements ItemStorage {
@@ -31,14 +32,14 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
 
     @Override
     public Optional<Item> getItemById(Integer itemId) {
-        return Optional.of(items.get(itemId));
+        return Optional.ofNullable(items.get(itemId));
     }
 
     @Override
     public Collection<Item> getAllUserItems(Integer userId) {
         return items.values().stream()
                 .filter(item -> Objects.equals(item.getOwner().getId(),userId))
-                .toList();
+                .collect(Collectors.toList());
     }
 
 
@@ -50,6 +51,6 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
                         item.getName().toLowerCase().contains(text.toLowerCase()) ||
                                 (item.getDescription() != null && item.getDescription().contains(text.toLowerCase()))
                 )
-                .toList();
+                .collect(Collectors.toList());
     }
 }

@@ -39,6 +39,14 @@ public class ApplicationExceptionHandler {
         return new ErrorResponse("You can not modify this item", e.getMessage());
     }
 
+    @ExceptionHandler({
+            NonUniqueEmail.class
+    })
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse catchNonUniqueEmailCreating(final RuntimeException e) {
+        return new ErrorResponse("User with such email already exist", e.getMessage());
+    }
+
 //        @ExceptionHandler
 //        @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 //        public ErrorResponse catchValidation(final RuntimeException e) {

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
@@ -10,7 +9,7 @@ public class ItemMapper {
         return ItemDto.builder()
                 .name(item.getName())
                 .description(item.getDescription())
-                .bookingStatus(item.getBookingStatus().toString())
+                .available(item.getAvailable())
                 .build();
     }
 
@@ -18,7 +17,7 @@ public class ItemMapper {
         return Item.builder()
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
-                .bookingStatus(BookingStatus.valueOf(itemDto.getBookingStatus().toUpperCase()))
+                .available(itemDto.getAvailable())
                 .owner(user)
                 .build();
     }
