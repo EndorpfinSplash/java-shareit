@@ -45,11 +45,14 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
 
     @Override
     public Collection<Item> findItemByNameOrDescription(String text) {
+        if (text == null || text.isEmpty()) {
+            return Collections.emptyList();
+        }
         return items.values().stream()
                 .filter(Item::isAvailable)
                 .filter(item ->
                         item.getName().toLowerCase().contains(text.toLowerCase()) ||
-                                (item.getDescription() != null && item.getDescription().contains(text.toLowerCase()))
+                                (item.getDescription() != null && item.getDescription().toLowerCase().contains(text.toLowerCase()))
                 )
                 .collect(Collectors.toList());
     }

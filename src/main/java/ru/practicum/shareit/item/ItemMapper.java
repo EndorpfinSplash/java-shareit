@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
@@ -14,6 +15,10 @@ public class ItemMapper {
     }
 
     public static Item toItem(ItemDto itemDto, User user) {
+        if (itemDto.getName().isBlank() || itemDto.getDescription() == null || itemDto.getAvailable() == null) {
+            throw new ValidationException("Item body contains empty fields!");
+        }
+
         return Item.builder()
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())

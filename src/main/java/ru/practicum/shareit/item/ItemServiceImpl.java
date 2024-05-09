@@ -30,15 +30,30 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public Item updateItem(Integer itemId, Integer userId, ItemDto itemDto)  {
-        Item notEditedItem = itemStorage.getItemById(itemId).orElseThrow(() -> new ItemNotFoundException(MessageFormat.format("Item with id {0} not found", itemId)));
-        if(!Objects.equals(notEditedItem.getOwner().getId(), userId)){
+        Item itemForUpdate = itemStorage.getItemById(itemId).orElseThrow(
+                () -> new ItemNotFoundException(MessageFormat.format("Item with id {0} not found", itemId)));
+        userStorage.getUserById(userId).orElseThrow(() ->
+                new UserNotFoundException(MessageFormat.format("User with id {0} not found", userId)));
+        if (!Objects.equals(itemForUpdate.getOwner().getId(), userId)) {
             throw new ItemCouldntBeModified(MessageFormat.format("User with id {0} can't modify foreign item", userId));
         }
-        User user = userStorage.getUserById(userId).orElseThrow(() ->
-                new UserNotFoundException(MessageFormat.format("User with id {0} not found", userId)));
-        Item item = ItemMapper.toItem(itemDto, user);
 
-        return itemStorage.updateItem(itemId, item).orElseThrow(() ->
+        Boolean availableNewValue = itemDto.getAvailable();
+        if (availableNewValue != null) {
+            itemForUpdate.setAvailable(availableNewValue);
+        }
+
+        String itemNewName = itemDto.getName();
+        if (itemNewName != null) {
+            itemForUpdate.setName(itemNewName);
+        }
+
+        String itemNewDescription = itemDto.getDescription();
+        if (itemNewDescription != null) {
+            itemForUpdate.setDescription(itemNewDescription);
+        }
+
+        return itemStorage.updateItem(itemId, itemForUpdate).orElseThrow(() ->
                 new ItemNotFoundException(MessageFormat.format("Item with id {0} not found", itemId)));
     }
 
