@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.user.dao.UserStorage;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserCreationDTO;
+import ru.practicum.shareit.user.dto.UserOutputDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -15,34 +18,40 @@ public class UserService {
 
     private final UserStorage userStorage;
 
-    public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+    public Collection<UserOutputDto> getAllUsers() {
+        return userStorage.getAllUsers().stream()
+                .map(UserMapper::toUserOutputDto)
+                .collect(Collectors.toList());
     }
 
-    public User createUser(User user) {
-        return userStorage.saveUser(user);
+    public UserOutputDto createUser(UserCreationDTO userCreationDTO) {
+        User user = UserMapper.toUser(userCreationDTO);
+        User savedUser = userStorage.saveUser(user);
+        return UserMapper.toUserOutputDto(savedUser);
     }
 
-    public User updateUser(Integer userId, UserDto userDto) {
+    public UserOutputDto updateUser(Integer userId, UserUpdateDto userUpdateDto) {
         User userForUpdate = userStorage.getUserById(userId).orElseThrow(
                 () -> new UserNotFoundException(MessageFormat.format("User with userId={0} not found", userId)));
-
-        if (userDto.getEmail() != null) {
-            userStorage.checkEmailUniqueness(userForUpdate.getId(), userDto.getEmail());
-            userForUpdate.setEmail(userDto.getEmail());
+        if (userUpdateDto.getEmail() != null) {
+            userStorage.checkEmailUniqueness(userForUpdate.getId(), userUpdateDto.getEmail());
+            userForUpdate.setEmail(userUpdateDto.getEmail());
         }
-        if (userDto.getName() != null) {
-            userForUpdate.setName(userDto.getName());
+        if (userUpdateDto.getName() != null) {
+            userForUpdate.setName(userUpdateDto.getName());
         }
 
-        return userStorage.updateUser(userId, userForUpdate).orElseThrow(
+        User updatedUser = userStorage.updateUser(userId, userForUpdate).orElseThrow(
                 () -> new UserNotFoundException(String.format("User with id=%s absent", userId))
         );
+
+        return UserMapper.toUserOutputDto(updatedUser);
     }
 
-    public User getUserById(Integer userId) {
-        return userStorage.getUserById(userId)
+    public UserOutputDto getUserById(Integer userId) {
+        User user = userStorage.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with userId={0} not found", userId)));
+        return UserMapper.toUserOutputDto(user);
     }
 
     public void deleteUserById(Integer id) {

@@ -3,7 +3,9 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserCreationDTO;
+import ru.practicum.shareit.user.dto.UserOutputDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -17,30 +19,30 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Collection<User> getAllUsers() {
+    public Collection<UserOutputDto> getAllUsers() {
         log.info("GET request to fetch collection of users received.");
         return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable("id") Integer id) {
+    public UserOutputDto getUser(@PathVariable("id") Integer id) {
         log.info("GET request to fetch user_id={} received.", id);
         return userService.getUserById(id);
     }
 
 
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
-        log.info("POST request to create {} received.", user);
-        User createdUser = userService.createUser(user);
-        log.info("{} was created", user);
+    public UserOutputDto createUser(@Valid @RequestBody UserCreationDTO userCreationDTO) {
+        log.info("POST request to create {} received.", userCreationDTO);
+        UserOutputDto createdUser = userService.createUser(userCreationDTO);
+        log.info("{} was created", userCreationDTO);
         return createdUser;
     }
 
     @PatchMapping("/{id}")
-    public User updateUser(@PathVariable("id") Integer id, @Valid @RequestBody UserDto userDto) {
+    public UserOutputDto updateUser(@PathVariable("id") Integer id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
         log.info("PATCH request to update user_id={} received.", id);
-        return userService.updateUser(id, userDto);
+        return userService.updateUser(id, userUpdateDto);
     }
 
     @DeleteMapping("/{id}")
