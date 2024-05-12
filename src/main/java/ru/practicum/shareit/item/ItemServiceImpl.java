@@ -25,10 +25,10 @@ public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
 
-    public ItemOutputDto createItem(Integer userId, ItemCreationDto ItemCreationDto) {
+    public ItemOutputDto createItem(Integer userId, ItemCreationDto itemCreationDto) {
         User user = userStorage.findUserById(userId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("User with id {0} not found", userId)));
-        Item item = ItemMapper.toItem(ItemCreationDto, user);
+        Item item = ItemMapper.toItem(itemCreationDto, user);
         Item savedItem = itemStorage.saveItem(item);
         return ItemMapper.toItemDto(savedItem);
     }
