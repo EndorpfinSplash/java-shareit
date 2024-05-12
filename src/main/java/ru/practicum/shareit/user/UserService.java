@@ -34,14 +34,11 @@ public class UserService {
         User userForUpdate = userStorage.findUserById(userId).orElseThrow(
                 () -> new UserNotFoundException(MessageFormat.format("User with userId={0} not found", userId)));
         if (userUpdateDto.getEmail() != null) {
-            userStorage.checkEmailUniqueness(userForUpdate.getId(), userUpdateDto.getEmail());
-            userForUpdate.setEmail(userUpdateDto.getEmail());
+            userStorage.checkEmailUniqueness(userId, userUpdateDto.getEmail());
         }
-        if (userUpdateDto.getName() != null) {
-            userForUpdate.setName(userUpdateDto.getName());
-        }
+        User editedUser = UserMapper.toUser(userForUpdate, userUpdateDto);
 
-        User updatedUser = userStorage.updateUser(userId, userForUpdate).orElseThrow(
+        User updatedUser = userStorage.updateUser(userId, editedUser).orElseThrow(
                 () -> new UserNotFoundException(String.format("User with id=%s absent", userId))
         );
 
