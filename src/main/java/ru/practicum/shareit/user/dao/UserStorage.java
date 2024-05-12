@@ -12,7 +12,7 @@ public interface UserStorage {
 
     Optional<User> updateUser(Integer userId, User user);
 
-    Optional<User> getUserById(Integer id);
+    Optional<User> findUserById(Integer id);
 
     void checkEmailUniqueness(Integer userId, String email);
 

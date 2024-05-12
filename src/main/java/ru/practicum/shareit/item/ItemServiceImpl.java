@@ -6,7 +6,9 @@ import ru.practicum.shareit.exception.ItemCouldntBeModified;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.dao.ItemStorage;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemCreationDto;
+import ru.practicum.shareit.item.dto.ItemOutputDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.UserStorage;
@@ -14,6 +16,7 @@ import ru.practicum.shareit.user.dao.UserStorage;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,52 +25,48 @@ public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
 
-    public Item createItem(Integer userId, ItemDto itemDto) {
-        User user = userStorage.getUserById(userId).orElseThrow(() ->
+    public ItemOutputDto createItem(Integer userId, ItemCreationDto ItemCreationDto) {
+        User user = userStorage.findUserById(userId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("User with id {0} not found", userId)));
-        Item item = ItemMapper.toItem(itemDto, user);
-        return itemStorage.saveItem(item);
+        Item item = ItemMapper.toItem(ItemCreationDto, user);
+        Item savedItem = itemStorage.saveItem(item);
+        return ItemMapper.toItemDto(savedItem);
     }
 
-    public Item updateItem(Integer itemId, Integer userId, ItemDto itemDto) {
-        Item itemForUpdate = itemStorage.getItemById(itemId).orElseThrow(
+    public ItemOutputDto updateItem(Integer itemId, Integer userId, ItemUpdateDto itemUpdateDto) {
+        Item itemForUpdate = itemStorage.findItemById(itemId).orElseThrow(
                 () -> new ItemNotFoundException(MessageFormat.format("Item with id {0} not found", itemId)));
-        userStorage.getUserById(userId).orElseThrow(() ->
+        User user = userStorage.findUserById(userId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("User with id {0} not found", userId)));
-        if (!Objects.equals(itemForUpdate.getOwner().getId(), userId)) {
+        if (!Objects.equals(itemForUpdate.getOwner(), user)) {
             throw new ItemCouldntBeModified(MessageFormat.format("User with id {0} can't modify foreign item", userId));
         }
 
-        Boolean availableNewValue = itemDto.getAvailable();
-        if (availableNewValue != null) {
-            itemForUpdate.setAvailable(availableNewValue);
-        }
+        Item editetItem = ItemMapper.toItem(itemForUpdate, itemUpdateDto, user);
 
-        String itemNewName = itemDto.getName();
-        if (itemNewName != null) {
-            itemForUpdate.setName(itemNewName);
-        }
-
-        String itemNewDescription = itemDto.getDescription();
-        if (itemNewDescription != null) {
-            itemForUpdate.setDescription(itemNewDescription);
-        }
-
-        return itemStorage.updateItem(itemId, itemForUpdate).orElseThrow(() ->
+        Item updatedItem = itemStorage.updateItem(itemId, editetItem).orElseThrow(() ->
                 new ItemNotFoundException(MessageFormat.format("Item with id {0} not found", itemId)));
+        return ItemMapper.toItemDto(updatedItem);
     }
 
-    public Item getItemById(Integer itemId) {
-        return itemStorage.getItemById(itemId).orElseThrow(() ->
-                new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
+    public ItemOutputDto getItemById(Integer itemId) {
+        return ItemMapper.toItemDto(itemStorage.findItemById(itemId).orElseThrow(
+                        () ->
+                                new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
+                )
         );
     }
 
-    public Collection<Item> getAllUserItems(Integer userId) {
-        return itemStorage.getAllUserItems(userId);
+    public Collection<ItemOutputDto> getAllUserItems(Integer userId) {
+        return itemStorage.getAllUserItems(userId)
+                .stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
-    public Collection<Item> findItemByNameOrDescription(String text) {
-        return itemStorage.findItemByNameOrDescription(text);
+    public Collection<ItemOutputDto> getItemByNameOrDescription(String text) {
+        return itemStorage.findItemByNameOrDescription(text).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 }

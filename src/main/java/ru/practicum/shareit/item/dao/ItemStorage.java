@@ -10,7 +10,7 @@ public interface ItemStorage {
 
     Optional<Item> updateItem(Integer itemId, Item item);
 
-    Optional<Item> getItemById(Integer itemId);
+    Optional<Item> findItemById(Integer itemId);
 
     Collection<Item> getAllUserItems(Integer userId);
 

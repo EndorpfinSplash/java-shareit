@@ -31,7 +31,7 @@ public class UserService {
     }
 
     public UserOutputDto updateUser(Integer userId, UserUpdateDto userUpdateDto) {
-        User userForUpdate = userStorage.getUserById(userId).orElseThrow(
+        User userForUpdate = userStorage.findUserById(userId).orElseThrow(
                 () -> new UserNotFoundException(MessageFormat.format("User with userId={0} not found", userId)));
         if (userUpdateDto.getEmail() != null) {
             userStorage.checkEmailUniqueness(userForUpdate.getId(), userUpdateDto.getEmail());
@@ -49,7 +49,7 @@ public class UserService {
     }
 
     public UserOutputDto getUserById(Integer userId) {
-        User user = userStorage.getUserById(userId)
+        User user = userStorage.findUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with userId={0} not found", userId)));
         return UserMapper.toUserOutputDto(user);
     }

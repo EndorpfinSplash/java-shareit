@@ -24,6 +24,7 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
     public Optional<Item> updateItem(Integer itemId, Item item) {
 
         if (items.containsKey(itemId)) {
+            item.setId(itemId);
             items.put(itemId, item);
             return Optional.of(item);
         }
@@ -31,7 +32,7 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
     }
 
     @Override
-    public Optional<Item> getItemById(Integer itemId) {
+    public Optional<Item> findItemById(Integer itemId) {
         return Optional.ofNullable(items.get(itemId));
     }
 
