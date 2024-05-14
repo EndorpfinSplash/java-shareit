@@ -42,9 +42,9 @@ public class ItemServiceImpl implements ItemService {
             throw new ItemCouldntBeModified(MessageFormat.format("User with id {0} can't modify foreign item", userId));
         }
 
-        Item editetItem = ItemMapper.toItem(itemForUpdate, itemUpdateDto, user);
+        Item editedItem = ItemMapper.toItem(itemForUpdate, itemUpdateDto, user);
 
-        Item updatedItem = itemStorage.updateItem(itemId, editetItem).orElseThrow(() ->
+        Item updatedItem = itemStorage.updateItem(itemId, editedItem).orElseThrow(() ->
                 new ItemNotFoundException(MessageFormat.format("Item with id {0} not found", itemId)));
         return ItemMapper.toItemDto(updatedItem);
     }

@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 public class ItemCreationDto {
     @NotBlank
     private String name;
-    @NotNull
+    @NotBlank
     private String description;
     @NotNull
     private Boolean available;

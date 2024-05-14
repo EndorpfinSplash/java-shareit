@@ -31,24 +31,24 @@ public class ItemMapper {
     }
 
     public static Item toItem(Item itemForUpdate, ItemUpdateDto itemUpdateDto, User user) {
-
+        Item item = itemForUpdate.toBuilder().build();
         Boolean availableNewValue = itemUpdateDto.getAvailable();
         if (availableNewValue != null) {
-            itemForUpdate.setAvailable(availableNewValue);
+            item.setAvailable(availableNewValue);
         }
 
         String itemNewName = itemUpdateDto.getName();
         if (itemNewName != null) {
-            itemForUpdate.setName(itemNewName);
+            item.setName(itemNewName);
         }
 
         String itemNewDescription = itemUpdateDto.getDescription();
         if (itemNewDescription != null) {
-            itemForUpdate.setDescription(itemNewDescription);
+            item.setDescription(itemNewDescription);
         }
-        itemForUpdate.setOwner(user);
+        item.setOwner(user);
 
-        return itemForUpdate;
+        return item;
     }
 
 }

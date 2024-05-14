@@ -12,6 +12,7 @@ import java.util.*;
 public class InMemoryUserStorage implements UserStorage {
     private int idCounter = 1;
     private final Map<Integer, User> users = new HashMap<>();
+    private static final Set<String> userMails = new HashSet<>();
 
 
     @Override
@@ -21,10 +22,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User saveUser(User user) {
-        checkEmailUniqueness(user.getId(), user.getEmail());
+        checkEmailUniq(user.getEmail());
         user.setId(idCounter);
         users.put(user.getId(), user);
         idCounter++;
+        userMails.add(user.getEmail());
         return user;
     }
 
@@ -32,6 +34,15 @@ public class InMemoryUserStorage implements UserStorage {
     public Optional<User> updateUser(Integer userId, User user) {
         if (users.containsKey(userId)) {
             user.setId(userId);
+
+            String originalEmail = users.get(userId).getEmail();
+            String newEmail = user.getEmail();
+            if (!originalEmail.equals(newEmail)) {
+                checkEmailUniq(newEmail);
+                userMails.remove(originalEmail);
+                userMails.add(newEmail);
+            }
+
             users.put(userId, user);
             return Optional.of(user);
         }
@@ -44,18 +55,16 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
 
-    public void checkEmailUniqueness(Integer userId, String email) {
-        if (users.values().stream()
-                .filter(user -> !Objects.equals(user.getId(), userId))
-                .map(User::getEmail)
-                .filter(email::equals)
-                .findFirst().orElse(null) != null) {
+    private void checkEmailUniq(String email) {
+        if (userMails.contains(email)) {
             throw new NonUniqueEmail(String.format("Email = %s address already in use", email));
         }
     }
 
     @Override
     public void deleteUserById(Integer id) {
+        String userMail = users.get(id).getEmail();
+        userMails.remove(userMail);
         users.remove(id);
     }
 }

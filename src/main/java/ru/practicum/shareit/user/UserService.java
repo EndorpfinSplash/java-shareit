@@ -33,9 +33,6 @@ public class UserService {
     public UserOutputDto updateUser(Integer userId, UserUpdateDto userUpdateDto) {
         User userForUpdate = userStorage.findUserById(userId).orElseThrow(
                 () -> new UserNotFoundException(MessageFormat.format("User with userId={0} not found", userId)));
-        if (userUpdateDto.getEmail() != null) {
-            userStorage.checkEmailUniqueness(userId, userUpdateDto.getEmail());
-        }
         User editedUser = UserMapper.toUser(userForUpdate, userUpdateDto);
 
         User updatedUser = userStorage.updateUser(userId, editedUser).orElseThrow(

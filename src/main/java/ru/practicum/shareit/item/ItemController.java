@@ -7,7 +7,9 @@ import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
+import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Collections;
 
 
 @RestController
@@ -19,7 +21,7 @@ public class ItemController {
 
 
     @PostMapping
-    public ItemOutputDto createItem(@RequestBody ItemCreationDto itemCreationDto,
+    public ItemOutputDto createItem(@Valid @RequestBody ItemCreationDto itemCreationDto,
                                     @RequestHeader("X-Sharer-User-Id") Integer userId
     ) {
         log.info("POST request to create {} item.", itemCreationDto);
@@ -31,7 +33,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemOutputDto updateItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                    @RequestBody ItemUpdateDto itemUpdateDto,
+                                    @Valid @RequestBody ItemUpdateDto itemUpdateDto,
                                     @PathVariable() Integer itemId) {
         log.info("Patch request to update {} item.", itemUpdateDto);
         ItemOutputDto updatedItem = itemService.updateItem(itemId, userId, itemUpdateDto);
@@ -54,6 +56,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public Collection<ItemOutputDto> findItemByNameOrDescription(@RequestParam(value = "text") String text) {
+        if (text == null || text.isEmpty()) {
+            return Collections.emptyList();
+        }
         log.info("GET request to search items by name or description id {}", text);
         return itemService.getItemByNameOrDescription(text);
     }
