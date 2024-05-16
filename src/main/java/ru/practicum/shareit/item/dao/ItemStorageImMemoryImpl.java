@@ -11,14 +11,14 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
 
     private int idCounter = 1;
     private final Map<Integer, Item> items = new HashMap<>();
-    private final Map<Integer, HashMap<Integer, Item>> userItems = new HashMap<>();
+    private final Map<Integer, List<Item>> userItems = new HashMap<>();
 
     @Override
     public Item saveItem(Item item) {
         item.setId(idCounter);
         items.put(item.getId(), item);
         idCounter++;
-        userItems.computeIfAbsent(item.getOwner().getId(), k -> new HashMap<>()).put(item.getId(), item);
+        userItems.computeIfAbsent(item.getOwner().getId(), k -> new LinkedList<>()).add(item);
         return item;
     }
 
@@ -29,8 +29,8 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
             Item oldItem = items.get(itemId);
             items.put(itemId, item);
 
-            userItems.get(oldItem.getOwner().getId()).remove(oldItem.getId());
-            userItems.get(item.getOwner().getId()).put(item.getId(), item);
+            userItems.get(oldItem.getOwner().getId()).remove(oldItem);
+            userItems.get(item.getOwner().getId()).add(item);
 
             return Optional.of(item);
         }
@@ -44,7 +44,7 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
 
     @Override
     public Collection<Item> getAllUserItems(Integer userId) {
-        return userItems.get(userId).values();
+        return userItems.get(userId);
     }
 
 

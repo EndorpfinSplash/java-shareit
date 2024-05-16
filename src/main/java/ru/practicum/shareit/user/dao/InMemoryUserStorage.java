@@ -12,7 +12,7 @@ import java.util.*;
 public class InMemoryUserStorage implements UserStorage {
     private int idCounter = 1;
     private final Map<Integer, User> users = new HashMap<>();
-    private static final Set<String> userMails = new HashSet<>();
+    private final Set<String> userMails = new HashSet<>();
 
 
     @Override
