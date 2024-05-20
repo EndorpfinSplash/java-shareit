@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemStorage itemStorage;
+    //    private final ItemRepository itemStorage;
     private final UserStorage userStorage;
 
     public ItemOutputDto createItem(Integer userId, ItemCreationDto itemCreationDto) {
