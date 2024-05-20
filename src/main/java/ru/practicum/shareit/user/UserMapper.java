@@ -23,8 +23,8 @@ public class UserMapper {
 
     public static User toUser(User userForUpdate, UserUpdateDto userUpdateDto) {
         User user = userForUpdate.toBuilder().build();
-        String email = userUpdateDto.getEmail();
         user.setId(userForUpdate.getId());
+        String email = userUpdateDto.getEmail();
         if (email != null) {
             user.setEmail(email);
         }
