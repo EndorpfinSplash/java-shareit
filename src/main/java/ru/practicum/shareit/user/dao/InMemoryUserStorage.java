@@ -16,12 +16,12 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     @Override
-    public Collection<User> getAllUsers() {
+    public Collection<User> findAll() {
         return users.values();
     }
 
     @Override
-    public User saveUser(User user) {
+    public User save(User user) {
         checkEmailUniq(user.getEmail());
         user.setId(idCounter);
         users.put(user.getId(), user);
@@ -31,7 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> updateUser(Integer userId, User user) {
+    public Optional<User> update(Integer userId, User user) {
         if (users.containsKey(userId)) {
             user.setId(userId);
 
@@ -50,7 +50,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> findUserById(Integer id) {
+    public Optional<User> findById(Integer id) {
         return Optional.ofNullable(users.get(id));
     }
 
@@ -62,7 +62,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void deleteUserById(Integer id) {
+    public void deleteById(Integer id) {
         String userMail = users.get(id).getEmail();
         userMails.remove(userMail);
         users.remove(id);

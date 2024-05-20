@@ -26,7 +26,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserStorage userStorage;
 
     public ItemOutputDto createItem(Integer userId, ItemCreationDto itemCreationDto) {
-        User user = userStorage.findUserById(userId).orElseThrow(() ->
+        User user = userStorage.findById(userId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("User with id {0} not found", userId)));
         Item item = ItemMapper.toItem(itemCreationDto, user);
         Item savedItem = itemStorage.saveItem(item);
@@ -36,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemOutputDto updateItem(Integer itemId, Integer userId, ItemUpdateDto itemUpdateDto) {
         Item itemForUpdate = itemStorage.findItemById(itemId).orElseThrow(
                 () -> new ItemNotFoundException(MessageFormat.format("Item with id {0} not found", itemId)));
-        User user = userStorage.findUserById(userId).orElseThrow(() ->
+        User user = userStorage.findById(userId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("User with id {0} not found", userId)));
         if (!Objects.equals(itemForUpdate.getOwner(), user)) {
             throw new ItemCouldntBeModified(MessageFormat.format("User with id {0} can't modify foreign item", userId));
