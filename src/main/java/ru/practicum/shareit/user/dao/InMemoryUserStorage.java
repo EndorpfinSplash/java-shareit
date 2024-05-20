@@ -22,7 +22,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User save(User user) {
-//        checkEmailUniq(user.getEmail());
         checkEmailUniqueness(user);
         if (user.getId() == null) {
         user.setId(idCounter);
