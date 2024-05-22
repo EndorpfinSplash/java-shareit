@@ -45,13 +45,13 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
     }
 
     @Override
-    public Collection<Item> findAllUserItems(Integer userId) {
+    public Collection<Item> findByOwner(Integer userId) {
         return userItems.get(userId);
     }
 
 
     @Override
-    public Collection<Item> findItemByNameOrDescription(String text) {
+    public Collection<Item> findByNameOrDescription(String text) {
         return items.values().stream()
                 .filter(Item::isAvailable)
                 .filter(item ->

@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ItemCouldntBeModified;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.item.dao.ItemStorage;
+import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dao.UserStorage;
+import ru.practicum.shareit.user.dao.UserRepository;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -22,9 +22,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemStorage itemStorage;
-    //    private final ItemRepository itemStorage;
-    private final UserStorage userStorage;
+    //    private final ItemStorage itemStorage;
+    private final ItemRepository itemStorage;
+    //    private final UserStorage userStorage;
+    private final UserRepository userStorage;
 
     public ItemOutputDto createItem(Integer userId, ItemCreationDto itemCreationDto) {
         User user = userStorage.findById(userId).orElseThrow(() ->
@@ -45,8 +46,7 @@ public class ItemServiceImpl implements ItemService {
 
         Item editedItem = ItemMapper.toItem(itemForUpdate, itemUpdateDto, user);
 
-        Item updatedItem = itemStorage.updateItem(itemId, editedItem).orElseThrow(() ->
-                new ItemNotFoundException(MessageFormat.format("Item with id {0} not found", itemId)));
+        Item updatedItem = itemStorage.save(editedItem);
         return ItemMapper.toItemDto(updatedItem);
     }
 
@@ -59,14 +59,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public Collection<ItemOutputDto> getAllUserItems(Integer userId) {
-        return itemStorage.findAllUserItems(userId)
+        return itemStorage.findByOwnerId(userId)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
     public Collection<ItemOutputDto> getItemByNameOrDescription(String text) {
-        return itemStorage.findItemByNameOrDescription(text).stream()
+        return itemStorage.findByNameOrDescription(text).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }

@@ -12,7 +12,7 @@ public interface ItemStorage {
 
     Optional<Item> findById(Integer itemId);
 
-    Collection<Item> findAllUserItems(Integer userId);
+    Collection<Item> findByOwner(Integer userId);
 
-    Collection<Item> findItemByNameOrDescription(String text);
+    Collection<Item> findByNameOrDescription(String text);
 }
