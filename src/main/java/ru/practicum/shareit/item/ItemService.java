@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.dto.ItemUserOutputDto;
 
 import java.util.Collection;
 
@@ -13,7 +14,7 @@ public interface ItemService {
 
     ItemOutputDto getItemById(Integer itemId);
 
-    Collection<ItemOutputDto> getAllUserItems(Integer userId);
+    Collection<ItemUserOutputDto> getAllUserItems(Integer userId);
 
     Collection<ItemOutputDto> getItemByNameOrDescription(String text);
 }

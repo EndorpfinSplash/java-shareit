@@ -4,6 +4,7 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.dto.ItemUserOutputDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -51,4 +52,12 @@ public class ItemMapper {
         return item;
     }
 
+    public static ItemUserOutputDto toUserItemDto(Item item) {
+        return ItemUserOutputDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .build();
+    }
 }

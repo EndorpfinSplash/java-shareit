@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.dto.ItemUserOutputDto;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -49,7 +50,7 @@ public class ItemController {
 
 
     @GetMapping
-    public Collection<ItemOutputDto> getAllUserItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public Collection<ItemUserOutputDto> getAllUserItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
         log.info("GET request to get all items from user {}", userId);
         return itemService.getAllUserItems(userId);
     }

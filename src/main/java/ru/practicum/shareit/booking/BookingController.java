@@ -1,13 +1,10 @@
 package ru.practicum.shareit.booking;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreationDTO;
 import ru.practicum.shareit.booking.dto.BookingOutputDto;
-import ru.practicum.shareit.user.dto.UserCreationDTO;
-import ru.practicum.shareit.user.dto.UserOutputDto;
 
 import javax.validation.Valid;
 
@@ -40,7 +37,7 @@ public class BookingController {
                                            @RequestParam(name = "approved", defaultValue = "false") boolean approved,
                                            @RequestHeader("X-Sharer-User-Id") Integer userId) {
         log.info("Patch request to approve booking.");
-        BookingOutputDto createdBooking = bookingService.approveBooking(bookingId, userId, approved);
+        BookingOutputDto createdBooking = bookingService.changeApproveBooking(bookingId, userId, approved);
         return null;
     }
 

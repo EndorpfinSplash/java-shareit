@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.exception.ItemCouldntBeModified;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
@@ -9,6 +10,7 @@ import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.dto.ItemUserOutputDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.UserRepository;
@@ -26,6 +28,8 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemStorage;
     //    private final UserStorage userStorage;
     private final UserRepository userStorage;
+
+    private final BookingRepository bookingStorage;
 
     public ItemOutputDto createItem(Integer userId, ItemCreationDto itemCreationDto) {
         User user = userStorage.findById(userId).orElseThrow(() ->
@@ -58,10 +62,10 @@ public class ItemServiceImpl implements ItemService {
         );
     }
 
-    public Collection<ItemOutputDto> getAllUserItems(Integer userId) {
-        return itemStorage.findByOwnerId(userId)
+    public Collection<ItemUserOutputDto> getAllUserItems(Integer userId) {
+        return itemStorage.findByOwner_Id(userId)
                 .stream()
-                .map(ItemMapper::toItemDto)
+                .map(ItemMapper::toUserItemDto)
                 .collect(Collectors.toList());
     }
 
