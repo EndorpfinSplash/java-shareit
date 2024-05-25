@@ -23,6 +23,7 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler({
             UserNotFoundException.class,
             ItemNotFoundException.class,
+            BookingNotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse catchNotFound(final RuntimeException e) {
@@ -30,7 +31,8 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler({
-            ItemCouldntBeModified.class
+            ItemCouldntBeModified.class,
+            BookingCouldntBeModified.class
     })
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse catchCouldNotModifiedItem(final RuntimeException e) {

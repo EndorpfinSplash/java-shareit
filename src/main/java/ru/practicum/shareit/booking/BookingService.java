@@ -5,7 +5,7 @@ import ru.practicum.shareit.booking.dto.BookingOutputDto;
 
 
 public interface BookingService {
-    BookingOutputDto createBooking(BookingCreationDTO bookingCreationDTO);
+    BookingOutputDto createBooking(BookingCreationDTO bookingCreationDTO, Integer bookerUserId);
 
-    BookingOutputDto changeApproveBooking(Integer bookingId, Integer userId, boolean approved);
+    BookingOutputDto changeApproveBooking(Integer bookingId, Integer approverUserId, boolean approved);
 }

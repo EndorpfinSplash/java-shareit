@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
@@ -9,7 +10,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 public class ItemMapper {
-    public static ItemOutputDto toItemDto(Item item) {
+    public static ItemOutputDto toItemOutDto(Item item) {
         return ItemOutputDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -52,12 +53,19 @@ public class ItemMapper {
         return item;
     }
 
-    public static ItemUserOutputDto toUserItemDto(Item item) {
+    public static ItemUserOutputDto toUserItemOutDto(Item item) {
         return ItemUserOutputDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .build();
+    }
+
+    public static ItemUserOutputDto toUserItemOutDto(Item item, Booking booking) {
+        ItemUserOutputDto userItemOutDto = toUserItemOutDto(item);
+        userItemOutDto.setBookingStartDate(booking.getStart());
+        userItemOutDto.setBookingEndDate(booking.getEnd());
+        return userItemOutDto;
     }
 }

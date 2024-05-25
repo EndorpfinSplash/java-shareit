@@ -1,17 +1,21 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 
 
 @Data
-@Getter
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity @Table(name = "ITEM")
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

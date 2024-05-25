@@ -20,25 +20,21 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingOutputDto createBooking(@Valid @RequestBody BookingCreationDTO bookingCreationDTO) {
-//        После создания запрос находится в статусе WAITING — «ожидает подтверждения».
+    public BookingOutputDto createBooking(@Valid @RequestBody BookingCreationDTO bookingCreationDTO,
+                                          @RequestHeader("X-Sharer-User-Id") Integer bookerUserId) {
         log.info("POST request to create {} booking.", bookingCreationDTO);
-        BookingOutputDto createdBooking = bookingService.createBooking(bookingCreationDTO);
+        BookingOutputDto createdBooking = bookingService.createBooking(bookingCreationDTO, bookerUserId);
         log.info("{} was created", createdBooking);
-        return null;
+        return createdBooking;
     }
-/*Подтверждение или отклонение запроса на бронирование.
-Может быть выполнено только владельцем вещи. Затем статус бронирования становится либо APPROVED, либо REJECTED.
-Эндпоинт — PATCH /bookings/{bookingId}?approved={approved},
-параметр approved может принимать значения true или false.*/
 
     @PatchMapping("/{bookingId}")
-    public BookingOutputDto approveBooking(@PathVariable Integer bookingId,
+    public BookingOutputDto changeApproveBooking(@PathVariable Integer bookingId,
                                            @RequestParam(name = "approved", defaultValue = "false") boolean approved,
-                                           @RequestHeader("X-Sharer-User-Id") Integer userId) {
+                                                 @RequestHeader("X-Sharer-User-Id") Integer approverUserId) {
         log.info("Patch request to approve booking.");
-        BookingOutputDto createdBooking = bookingService.changeApproveBooking(bookingId, userId, approved);
-        return null;
+        BookingOutputDto changedBooking = bookingService.changeApproveBooking(bookingId, approverUserId, approved);
+        return changedBooking;
     }
 
 }
