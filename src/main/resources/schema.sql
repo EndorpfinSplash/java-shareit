@@ -1,12 +1,12 @@
--- drop table BOOKING;
+-- drop table if exists BOOKING;
 --
--- drop table COMMENT;
+-- drop table if exists COMMENT;
 --
--- drop table ITEM;
+-- drop table if exists ITEM;
 --
--- drop table REQUEST;
+-- drop table if exists REQUEST;
 --
--- drop table USERS;
+-- drop table if exists USERS;
 
 
 

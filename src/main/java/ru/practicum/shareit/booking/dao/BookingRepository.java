@@ -26,7 +26,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query(" select b from Booking b join b.booker as u " +
             " where u.id = ?1 " +
             " order by b.start desc ")
-    List<Booking> findByBooker_IdOrderByStartDesc(Integer booker_Id);
+    List<Booking> findByBooker_IdOrderByStartDesc(Integer bookerId);
 
     @Query(" select b from Booking b join b.booker as u " +
             " where u.id = ?1 and b.bookingStatus = ?2 " +
@@ -95,8 +95,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
                     "  and b.START_DATE <= now() " +
                     "where t.id = ?1 " +
                     "order by b.START_DATE desc " +
-                    "limit 1"
-            , nativeQuery = true)
+                    "limit 1",
+            nativeQuery = true)
     ShortBookingView findLastItemBooking(Integer itemId);
 
     @Query(value =
@@ -106,7 +106,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
                     "  and b.START_DATE > now() " +
                     "where t.id = ?1 " +
                     "order by b.START_DATE " +
-                    "limit 1"
-            , nativeQuery = true)
+                    "limit 1",
+            nativeQuery = true)
     ShortBookingView findNextItemBooking(Integer itemId);
 }
