@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.dto.ShortBookingView;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +27,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query(" select b from Booking b join b.booker as u " +
             " where u.id = ?1 and b.bookingStatus = ?2 " +
             " order by b.start desc ")
-    List<Booking> findByBooker_IdAndBookingStatusOrderByStartDesc(Integer bookerId, String bookingStatus);
+    List<Booking> findByBooker_IdAndBookingStatusOrderByStartDesc(Integer bookerId, BookingStatus bookingStatus);
 
     @Query(" select b from Booking b join b.booker as u " +
             " where u.id = ?1 " +
@@ -59,7 +61,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "   and b.bookingStatus = ?2 " +
             " order by b.start desc "
     )
-    List<Booking> findByOwnerAndStatus(Integer ownerId, String bookingStatus);
+    List<Booking> findByOwnerAndStatus(Integer ownerId, BookingStatus bookingStatus);
 
     @Query(" select b from Booking b join b.item as i join i.owner o" +
             " where o.id = ?1 " +
@@ -82,4 +84,27 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     )
     List<Booking> findByOwnerFuture(Integer ownerId);
 
+    @Query(value =
+            "select b.id , b.BOOKER_ID as bookerId " +
+                    "from ITEM t\n" +
+                    "          join BOOKING b on t.ID = b.ITEM_ID\n" +
+                    "          and b.START_DATE <= now() " +
+                    "where t.id = ?1 " +
+                    "order by b.START_DATE desc\n" +
+                    "limit 1"
+            , nativeQuery = true
+    )
+    ShortBookingView findLastItemBooking(Integer itemId);
+
+    @Query(value =
+            "select  b.id , b.BOOKER_ID as bookerId " +
+                    "from ITEM t\n" +
+                    "          join BOOKING b on t.ID = b.ITEM_ID\n" +
+                    "    and b.START_DATE > now() " +
+                    "where t.id = ?1 " +
+                    "order by b.START_DATE\n" +
+                    "limit 1"
+            , nativeQuery = true
+    )
+    ShortBookingView findNextItemBooking(Integer itemId);
 }

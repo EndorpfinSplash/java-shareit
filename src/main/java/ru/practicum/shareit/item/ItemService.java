@@ -12,7 +12,7 @@ public interface ItemService {
 
     ItemOutputDto updateItem(Integer itemId, Integer userId, ItemUpdateDto itemUpdateDto);
 
-    ItemOutputDto getItemById(Integer itemId);
+    ItemUserOutputDto getItemById(Integer itemId, Integer userId);
 
     Collection<ItemUserOutputDto> getAllUserItems(Integer userId);
 

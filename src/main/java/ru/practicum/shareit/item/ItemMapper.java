@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.dto.ShortBookingView;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
@@ -62,10 +62,12 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemUserOutputDto toUserItemOutDto(Item item, Booking booking) {
+    public static ItemUserOutputDto toUserItemOutDto(Item item, ShortBookingView lastBooking, ShortBookingView nextBooking) {
         ItemUserOutputDto userItemOutDto = toUserItemOutDto(item);
-        userItemOutDto.setBookingStartDate(booking.getStart());
-        userItemOutDto.setBookingEndDate(booking.getEnd());
+//        userItemOutDto.setBookingStartDate(booking.getStart());
+//        userItemOutDto.setBookingEndDate(booking.getEnd());
+        userItemOutDto.setLastBooking(lastBooking);
+        userItemOutDto.setNextBooking(nextBooking);
         return userItemOutDto;
     }
 }

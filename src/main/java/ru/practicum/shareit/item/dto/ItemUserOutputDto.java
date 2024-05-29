@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.dto.ShortBookingView;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
@@ -20,6 +21,8 @@ public class ItemUserOutputDto {
     private BookingStatus bookingStatus;
     private LocalDateTime bookingStartDate;
     private LocalDateTime bookingEndDate;
+    private ShortBookingView lastBooking;
+    private ShortBookingView nextBooking;
 
     public Boolean isAvailable() {
         return available;

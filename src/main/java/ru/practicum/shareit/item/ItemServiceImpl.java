@@ -2,8 +2,8 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dao.BookingRepository;
+import ru.practicum.shareit.booking.dto.ShortBookingView;
 import ru.practicum.shareit.exception.ItemCouldntBeModified;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
@@ -19,7 +19,6 @@ import ru.practicum.shareit.user.dao.UserRepository;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -57,27 +56,40 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemOutDto(updatedItem);
     }
 
-    public ItemOutputDto getItemById(Integer itemId) {
-        return ItemMapper.toItemOutDto(itemStorage.findById(itemId).orElseThrow(
-                        () ->
-                                new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
-                )
+    public ItemUserOutputDto getItemById(Integer itemId, Integer userId) {
+
+        Item item = itemStorage.findById(itemId).orElseThrow(
+                () ->
+                        new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
         );
+        if (userId.equals(item.getOwner().getId())) {
+            ShortBookingView lastBooking = bookingStorage.findLastItemBooking(itemId);
+            ShortBookingView nextBooking = bookingStorage.findNextItemBooking(itemId);
+            return ItemMapper.toUserItemOutDto(item, lastBooking, nextBooking);
+        }
+        return ItemMapper.toUserItemOutDto(item);
+
     }
 
     public Collection<ItemUserOutputDto> getAllUserItems(Integer userId) {
         Collection<ItemUserOutputDto> result = new ArrayList<>();
         itemStorage.findByOwner_Id(userId).forEach(
                 item -> {
-                    List<Booking> bookingsByItemId = bookingStorage.findBookingsByItem_Id(item.getId());
-                    if (bookingsByItemId.isEmpty()) {
-                        ItemUserOutputDto itemUserOutputDto = ItemMapper.toUserItemOutDto(item);
-                        result.add(itemUserOutputDto);
-                    } else {
-                        bookingsByItemId.forEach(
-                                booking -> result.add(ItemMapper.toUserItemOutDto(item, booking))
-                        );
-                    }
+//                    List<Booking> bookingsByItemId = bookingStorage.findBookingsByItem_Id(item.getId());
+                    ShortBookingView lastBooking = bookingStorage.findLastItemBooking(item.getId());
+                    ShortBookingView nextBooking = bookingStorage.findNextItemBooking(item.getId());
+
+                    ItemUserOutputDto itemUserOutputDto = ItemMapper.toUserItemOutDto(item, lastBooking, nextBooking);
+                    result.add(itemUserOutputDto);
+
+//                    if (bookingsByItemId.isEmpty()) {
+//                        ItemUserOutputDto itemUserOutputDto = ItemMapper.toUserItemOutDto(item);
+//                        result.add(itemUserOutputDto);
+//                    } else {
+//                        bookingsByItemId.forEach(
+//                                booking -> result.add(ItemMapper.toUserItemOutDto(item, booking))
+//                        );
+//                    }
                 }
         );
         return result;
