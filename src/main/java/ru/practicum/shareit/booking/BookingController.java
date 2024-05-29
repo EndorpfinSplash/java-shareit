@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.dto.BookingCreationDTO;
 import ru.practicum.shareit.booking.dto.BookingOutputDto;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * TODO Sprint add-bookings.
@@ -30,11 +31,32 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public BookingOutputDto changeApproveBooking(@PathVariable Integer bookingId,
-                                           @RequestParam(name = "approved", defaultValue = "false") boolean approved,
+                                                 @RequestParam(name = "approved", defaultValue = "false") boolean approved,
                                                  @RequestHeader("X-Sharer-User-Id") Integer approverUserId) {
         log.info("Patch request to approve booking.");
         BookingOutputDto changedBooking = bookingService.changeApproveBooking(bookingId, approverUserId, approved);
         return changedBooking;
+    }
+
+    @GetMapping("/{bookingId}")
+    public BookingOutputDto getBooking(@PathVariable Integer bookingId,
+                                       @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        log.info("Get request to get booking info.");
+        return bookingService.getBooking(userId, bookingId);
+    }
+
+    @GetMapping
+    public List<BookingOutputDto> getAllBookerBookings(@RequestParam(name = "state", defaultValue = "ALL") String state,
+                                                       @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        log.info("Get request to get all booker's bookings info.");
+        return bookingService.findAllBookerBookingsWithState(userId, state);
+    }
+
+    @GetMapping("/owner")
+    public List<BookingOutputDto> getAllOwnerBookingRequestsInState(@RequestParam(name = "state", defaultValue = "ALL") String state,
+                                                                    @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
+        log.info("Get request to get all owner's bookings info.");
+        return bookingService.findAllOwnerBookingsWithState(ownerId, state);
     }
 
 }
