@@ -7,15 +7,12 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
+
 public class BookingOutputDto {
     private Integer id;
 

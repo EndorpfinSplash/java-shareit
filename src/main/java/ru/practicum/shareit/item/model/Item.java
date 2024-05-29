@@ -34,8 +34,6 @@ public class Item {
     @JoinColumn(name = "OWNER_ID")
     private User owner;
 
-//    private ItemRequest request;
-
     public Boolean isAvailable() {
         return available;
     }

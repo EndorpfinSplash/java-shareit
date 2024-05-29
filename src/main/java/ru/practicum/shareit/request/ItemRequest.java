@@ -9,9 +9,7 @@ import ru.practicum.shareit.user.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-item-requests.
- */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,7 +27,7 @@ public class ItemRequest {
     @JoinColumn(name = "REQUESTOR_ID")
     private User requestor;
 
-//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-//    @Column()
-//    private LocalDateTime created;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Column()
+    private LocalDateTime created;
 }

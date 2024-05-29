@@ -89,26 +89,24 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findByOwnerFuture(Integer ownerId);
 
     @Query(value =
-            "select b.id , b.BOOKER_ID as bookerId " +
-                    "from ITEM t\n" +
-                    "          join BOOKING b on t.ID = b.ITEM_ID\n" +
-                    "          and b.START_DATE <= now() " +
+            "select b.id, b.BOOKER_ID as bookerId " +
+                    " from ITEM t " +
+                    " join BOOKING b on t.ID = b.ITEM_ID " +
+                    "  and b.START_DATE <= now() " +
                     "where t.id = ?1 " +
-                    "order by b.START_DATE desc\n" +
+                    "order by b.START_DATE desc " +
                     "limit 1"
-            , nativeQuery = true
-    )
+            , nativeQuery = true)
     ShortBookingView findLastItemBooking(Integer itemId);
 
     @Query(value =
-            "select b.id , b.BOOKER_ID as bookerId " +
-                    "from ITEM t\n" +
-                    "          join BOOKING b on t.ID = b.ITEM_ID\n" +
-                    "    and b.START_DATE > now() " +
+            "select b.id, b.BOOKER_ID as bookerId " +
+                    " from ITEM t " +
+                    " join BOOKING b on t.ID = b.ITEM_ID " +
+                    "  and b.START_DATE > now() " +
                     "where t.id = ?1 " +
-                    "order by b.START_DATE\n" +
+                    "order by b.START_DATE " +
                     "limit 1"
-            , nativeQuery = true
-    )
+            , nativeQuery = true)
     ShortBookingView findNextItemBooking(Integer itemId);
 }
