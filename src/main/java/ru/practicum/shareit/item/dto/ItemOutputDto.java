@@ -1,24 +1,20 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
-
 @Data
-@Getter
-@Builder(toBuilder = true)
-@AllArgsConstructor
-@NoArgsConstructor
-public class Item {
+@Builder
+public class ItemOutputDto {
     private Integer id;
     private String name;
     private String description;
     private Boolean available;
     private User owner;
     private ItemRequest request;
-
     private BookingStatus bookingStatus;
 
     public Boolean isAvailable() {
