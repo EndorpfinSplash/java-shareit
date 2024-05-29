@@ -2,8 +2,15 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.booking.dto.ShortBookingView;
+import ru.practicum.shareit.comment.Comment;
+import ru.practicum.shareit.comment.CommentMapper;
+import ru.practicum.shareit.comment.CommentRepository;
+import ru.practicum.shareit.comment.Dto.CommentCreationDto;
+import ru.practicum.shareit.comment.Dto.CommentOutputDto;
+import ru.practicum.shareit.exception.CommentForbidden;
 import ru.practicum.shareit.exception.ItemCouldntBeModified;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
@@ -16,9 +23,12 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.UserRepository;
 
+import javax.validation.Valid;
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -32,6 +42,8 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userStorage;
 
     private final BookingRepository bookingStorage;
+
+    private final CommentRepository commentRepository;
 
     public ItemOutputDto createItem(Integer userId, ItemCreationDto itemCreationDto) {
         User user = userStorage.findById(userId).orElseThrow(() ->
@@ -58,38 +70,33 @@ public class ItemServiceImpl implements ItemService {
 
     public ItemUserOutputDto getItemById(Integer itemId, Integer userId) {
 
-        Item item = itemStorage.findById(itemId).orElseThrow(
-                () ->
+        Item item = itemStorage.findById(itemId).orElseThrow(() ->
                         new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
         );
+        List<CommentOutputDto> commentsByItemId = commentRepository.getCommentsByItemId(itemId);
+        ItemUserOutputDto userItemOutDto = ItemMapper.toUserItemOutDto(item, commentsByItemId);
+
         if (userId.equals(item.getOwner().getId())) {
             ShortBookingView lastBooking = bookingStorage.findLastItemBooking(itemId);
+            userItemOutDto.setLastBooking(lastBooking);
             ShortBookingView nextBooking = bookingStorage.findNextItemBooking(itemId);
-            return ItemMapper.toUserItemOutDto(item, lastBooking, nextBooking);
+            userItemOutDto.setNextBooking(nextBooking);
         }
-        return ItemMapper.toUserItemOutDto(item);
-
+        return userItemOutDto;
     }
 
     public Collection<ItemUserOutputDto> getAllUserItems(Integer userId) {
         Collection<ItemUserOutputDto> result = new ArrayList<>();
         itemStorage.findByOwner_Id(userId).forEach(
                 item -> {
-//                    List<Booking> bookingsByItemId = bookingStorage.findBookingsByItem_Id(item.getId());
-                    ShortBookingView lastBooking = bookingStorage.findLastItemBooking(item.getId());
-                    ShortBookingView nextBooking = bookingStorage.findNextItemBooking(item.getId());
-
-                    ItemUserOutputDto itemUserOutputDto = ItemMapper.toUserItemOutDto(item, lastBooking, nextBooking);
+                    Integer itemId = item.getId();
+                    List<CommentOutputDto> commentsByItemId = commentRepository.getCommentsByItemId(itemId);
+                    ItemUserOutputDto itemUserOutputDto = ItemMapper.toUserItemOutDto(item, commentsByItemId);
+                    ShortBookingView lastBooking = bookingStorage.findLastItemBooking(itemId);
+                    itemUserOutputDto.setLastBooking(lastBooking);
+                    ShortBookingView nextBooking = bookingStorage.findNextItemBooking(itemId);
+                    itemUserOutputDto.setNextBooking(nextBooking);
                     result.add(itemUserOutputDto);
-
-//                    if (bookingsByItemId.isEmpty()) {
-//                        ItemUserOutputDto itemUserOutputDto = ItemMapper.toUserItemOutDto(item);
-//                        result.add(itemUserOutputDto);
-//                    } else {
-//                        bookingsByItemId.forEach(
-//                                booking -> result.add(ItemMapper.toUserItemOutDto(item, booking))
-//                        );
-//                    }
                 }
         );
         return result;
@@ -99,5 +106,28 @@ public class ItemServiceImpl implements ItemService {
         return itemStorage.findByNameOrDescription(text).stream()
                 .map(ItemMapper::toItemOutDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentOutputDto saveComment(Integer commentatorId, Integer itemId, @Valid CommentCreationDto commentCreationDto) {
+        Item item = itemStorage.findById(itemId).orElseThrow(() ->
+                new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
+        );
+
+        User commentator = userStorage.findById(commentatorId).orElseThrow(() ->
+                new UserNotFoundException(MessageFormat.format("User with id {0} not found", commentatorId)));
+        Integer cntOfFinishedItemBookings = bookingStorage.countFinishedItemBookingsByBooker(
+                commentatorId,
+                itemId,
+                BookingStatus.APPROVED,
+                LocalDateTime.now()
+        );
+        if (cntOfFinishedItemBookings < 1) {
+            throw new CommentForbidden("You cant comment this item!");
+        }
+
+        Comment commentForSave = CommentMapper.toComment(commentCreationDto, item, commentator);
+        Comment savedComment = commentRepository.save(commentForSave);
+        return CommentMapper.toCommentOutputDto(savedComment);
     }
 }

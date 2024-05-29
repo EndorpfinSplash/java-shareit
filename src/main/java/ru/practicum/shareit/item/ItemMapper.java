@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.booking.dto.ShortBookingView;
+import ru.practicum.shareit.comment.Dto.CommentOutputDto;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
@@ -8,6 +8,8 @@ import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.dto.ItemUserOutputDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
+
+import java.util.List;
 
 public class ItemMapper {
     public static ItemOutputDto toItemOutDto(Item item) {
@@ -53,21 +55,14 @@ public class ItemMapper {
         return item;
     }
 
-    public static ItemUserOutputDto toUserItemOutDto(Item item) {
+    public static ItemUserOutputDto toUserItemOutDto(Item item, List<CommentOutputDto> comments) {
         return ItemUserOutputDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .comments(comments)
                 .build();
     }
 
-    public static ItemUserOutputDto toUserItemOutDto(Item item, ShortBookingView lastBooking, ShortBookingView nextBooking) {
-        ItemUserOutputDto userItemOutDto = toUserItemOutDto(item);
-//        userItemOutDto.setBookingStartDate(booking.getStart());
-//        userItemOutDto.setBookingEndDate(booking.getEnd());
-        userItemOutDto.setLastBooking(lastBooking);
-        userItemOutDto.setNextBooking(nextBooking);
-        return userItemOutDto;
-    }
 }

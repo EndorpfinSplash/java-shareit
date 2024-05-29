@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.dao;
 
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,9 +14,14 @@ import java.util.List;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
-    List<Booking> findByBooker_IdAndEndIsBefore(Integer bookerId, LocalDateTime end, Sort sort);
 
-    List<Booking> findBookingsByItem_Id(Integer itemId);
+    @Query(" select count(b) from Booking b join b.booker as u join b.item i " +
+            " where u.id = ?1 and i.id = ?2 " +
+            " and b.bookingStatus = ?3 and b.end <= ?4 ")
+    Integer countFinishedItemBookingsByBooker(Integer booker,
+                                              Integer item,
+                                              BookingStatus bookingStatus,
+                                              LocalDateTime currentDateTime);
 
     @Query(" select b from Booking b join b.booker as u " +
             " where u.id = ?1 " +
@@ -97,7 +101,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     ShortBookingView findLastItemBooking(Integer itemId);
 
     @Query(value =
-            "select  b.id , b.BOOKER_ID as bookerId " +
+            "select b.id , b.BOOKER_ID as bookerId " +
                     "from ITEM t\n" +
                     "          join BOOKING b on t.ID = b.ITEM_ID\n" +
                     "    and b.START_DATE > now() " +

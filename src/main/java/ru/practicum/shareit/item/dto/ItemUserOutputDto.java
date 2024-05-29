@@ -4,10 +4,12 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.ShortBookingView;
+import ru.practicum.shareit.comment.Dto.CommentOutputDto;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -23,8 +25,6 @@ public class ItemUserOutputDto {
     private LocalDateTime bookingEndDate;
     private ShortBookingView lastBooking;
     private ShortBookingView nextBooking;
+    private List<CommentOutputDto> comments;
 
-    public Boolean isAvailable() {
-        return available;
-    }
 }

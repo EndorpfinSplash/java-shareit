@@ -13,8 +13,15 @@ public class ApplicationExceptionHandler {
 
 
     @ExceptionHandler({
-            ValidationException.class,
+            CommentForbidden.class,
+    })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse catchValidation(final CommentForbidden e) {
+        return new ErrorResponse("Item cannot be commented", e.getMessage());
+    }
 
+    @ExceptionHandler({
+            ValidationException.class,
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse catchValidation(final ValidationException e) {

@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.comment.Dto.CommentCreationDto;
+import ru.practicum.shareit.comment.Dto.CommentOutputDto;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
@@ -17,4 +19,6 @@ public interface ItemService {
     Collection<ItemUserOutputDto> getAllUserItems(Integer userId);
 
     Collection<ItemOutputDto> getItemByNameOrDescription(String text);
+
+    CommentOutputDto saveComment(Integer commentatorId, Integer itemId, CommentCreationDto commentCreationDto);
 }
