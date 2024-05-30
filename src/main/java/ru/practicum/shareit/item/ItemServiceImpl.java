@@ -79,8 +79,10 @@ public class ItemServiceImpl implements ItemService {
         if (userId.equals(item.getOwner().getId())) {
             ShortBookingView lastBooking = bookingStorage.findLastItemBooking(itemId);
             userItemOutDto.setLastBooking(lastBooking);
-            ShortBookingView nextBooking = bookingStorage.findNextItemBooking(itemId);
-            userItemOutDto.setNextBooking(nextBooking);
+            if (lastBooking != null) {
+                ShortBookingView nextBooking = bookingStorage.findNextItemBooking(itemId);
+                userItemOutDto.setNextBooking(nextBooking);
+            }
         }
         return userItemOutDto;
     }
