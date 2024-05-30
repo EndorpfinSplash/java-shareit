@@ -5,13 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreationDTO;
 import ru.practicum.shareit.booking.dto.BookingOutputDto;
+import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-bookings.
- */
+
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
@@ -35,6 +34,7 @@ public class BookingController {
                                                  @RequestHeader("X-Sharer-User-Id") Integer approverUserId) {
         log.info("Patch request to approve booking.");
         BookingOutputDto changedBooking = bookingService.changeApproveBooking(bookingId, approverUserId, approved);
+        log.info("Booking was updated successfully.");
         return changedBooking;
     }
 
@@ -42,21 +42,27 @@ public class BookingController {
     public BookingOutputDto getBooking(@PathVariable Integer bookingId,
                                        @RequestHeader("X-Sharer-User-Id") Integer userId) {
         log.info("Get request to get booking info.");
-        return bookingService.getBooking(userId, bookingId);
+        BookingOutputDto booking = bookingService.getBooking(userId, bookingId);
+        log.info("Booking with id={} get successfully by user with id ={}.", bookingId, userId);
+        return booking;
     }
 
     @GetMapping
     public List<BookingOutputDto> getAllBookerBookings(@RequestParam(name = "state", defaultValue = "ALL") String state,
-                                                       @RequestHeader("X-Sharer-User-Id") Integer userId) {
+                                                       @RequestHeader("X-Sharer-User-Id") Integer bookerId) {
         log.info("Get request to get all booker's bookings info.");
-        return bookingService.findAllBookerBookingsWithState(userId, state);
+        List<BookingOutputDto> allBookerBookingsWithState = bookingService.findAllBookerBookingsWithState(bookerId, state);
+        log.info("Booker with id={} get his bookings in state={} successfully.", bookerId, state);
+        return allBookerBookingsWithState;
     }
 
     @GetMapping("/owner")
     public List<BookingOutputDto> getAllOwnerBookingRequestsInState(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                                                     @RequestHeader("X-Sharer-User-Id") Integer ownerId) {
         log.info("Get request to get all owner's bookings info.");
-        return bookingService.findAllOwnerBookingsWithState(ownerId, state);
+        List<BookingOutputDto> allOwnerBookingsWithState = bookingService.findAllOwnerBookingsWithState(ownerId, state);
+        log.info("Owner with id={} get request for bookings in state={} successfully.", ownerId, state);
+        return allOwnerBookingsWithState;
     }
 
 }
