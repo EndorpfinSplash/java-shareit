@@ -1,9 +1,11 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.NonUniqueEmail;
 import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.user.dao.UserStorage;
+import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.dto.UserCreationDTO;
 import ru.practicum.shareit.user.dto.UserOutputDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
@@ -16,39 +18,49 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserStorage userStorage;
+
+    //    private final UserStorage userStorage;
+    private final UserRepository userStorage;
 
     public Collection<UserOutputDto> getAllUsers() {
-        return userStorage.getAllUsers().stream()
+        return userStorage.findAll().stream()
                 .map(UserMapper::toUserOutputDto)
                 .collect(Collectors.toList());
     }
 
     public UserOutputDto createUser(UserCreationDTO userCreationDTO) {
         User user = UserMapper.toUser(userCreationDTO);
-        User savedUser = userStorage.saveUser(user);
+        User savedUser = null;
+        try {
+            savedUser = userStorage.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new NonUniqueEmail(String.format("Email = %s address has already in use", user.getEmail()));
+        }
         return UserMapper.toUserOutputDto(savedUser);
     }
 
     public UserOutputDto updateUser(Integer userId, UserUpdateDto userUpdateDto) {
-        User userForUpdate = userStorage.findUserById(userId).orElseThrow(
+        User userForUpdate = userStorage.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(MessageFormat.format("User with userId={0} not found", userId)));
         User editedUser = UserMapper.toUser(userForUpdate, userUpdateDto);
 
-        User updatedUser = userStorage.updateUser(userId, editedUser).orElseThrow(
-                () -> new UserNotFoundException(String.format("User with id=%s absent", userId))
-        );
+        User updatedUser = null;
+        try {
+            updatedUser = userStorage.save(editedUser);
+        } catch (DataIntegrityViolationException e) {
+            throw new NonUniqueEmail(String.format("Email = %s address has already in use", updatedUser.getEmail()));
+        }
 
         return UserMapper.toUserOutputDto(updatedUser);
     }
 
     public UserOutputDto getUserById(Integer userId) {
-        User user = userStorage.findUserById(userId)
+        User user = userStorage.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(MessageFormat.format("User with userId={0} not found", userId)));
         return UserMapper.toUserOutputDto(user);
     }
 
     public void deleteUserById(Integer id) {
-        userStorage.deleteUserById(id);
+        userStorage.deleteById(id);
     }
 }

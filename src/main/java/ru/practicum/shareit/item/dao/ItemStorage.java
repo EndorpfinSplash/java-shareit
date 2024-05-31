@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface ItemStorage {
-    Item saveItem(Item item);
+    Item save(Item item);
 
     Optional<Item> updateItem(Integer itemId, Item item);
 
-    Optional<Item> findItemById(Integer itemId);
+    Optional<Item> findById(Integer itemId);
 
-    Collection<Item> getAllUserItems(Integer userId);
+    Collection<Item> findByOwner(Integer userId);
 
-    Collection<Item> findItemByNameOrDescription(String text);
+    Collection<Item> findByNameOrDescription(String text);
 }

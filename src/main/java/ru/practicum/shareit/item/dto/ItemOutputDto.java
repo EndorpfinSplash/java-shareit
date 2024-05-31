@@ -17,7 +17,4 @@ public class ItemOutputDto {
     private ItemRequest request;
     private BookingStatus bookingStatus;
 
-    public Boolean isAvailable() {
-        return available;
-    }
 }

@@ -13,7 +13,15 @@ public class ApplicationExceptionHandler {
 
 
     @ExceptionHandler({
-            ValidationException.class
+            CommentForbidden.class,
+    })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse catchValidation(final CommentForbidden e) {
+        return new ErrorResponse("Item cannot be commented", e.getMessage());
+    }
+
+    @ExceptionHandler({
+            ValidationException.class,
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse catchValidation(final ValidationException e) {
@@ -21,8 +29,21 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler({
+            UnknownBookingState.class,
+            BookingCouldntBeModified.class,
+    })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse catchValidation(final RuntimeException e) {
+        return new ErrorResponse("Unknown state: " + e.getMessage(),
+                "Incorrect booking state was send.");
+    }
+
+    @ExceptionHandler({
             UserNotFoundException.class,
             ItemNotFoundException.class,
+            BookingNotFoundException.class,
+            BookingAccessDeniedException.class,
+            BookingStatusCanChaneOnlyOwner.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse catchNotFound(final RuntimeException e) {
@@ -30,7 +51,9 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler({
-            ItemCouldntBeModified.class
+            ItemCouldntBeModified.class,
+
+
     })
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse catchCouldNotModifiedItem(final RuntimeException e) {

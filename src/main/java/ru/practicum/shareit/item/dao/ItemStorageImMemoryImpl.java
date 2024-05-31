@@ -14,10 +14,12 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
     private final Map<Integer, List<Item>> userItems = new HashMap<>();
 
     @Override
-    public Item saveItem(Item item) {
-        item.setId(idCounter);
+    public Item save(Item item) {
+        if (item.getId() == null) {
+            item.setId(idCounter);
+            idCounter++;
+        }
         items.put(item.getId(), item);
-        idCounter++;
         userItems.computeIfAbsent(item.getOwner().getId(), k -> new LinkedList<>()).add(item);
         return item;
     }
@@ -38,18 +40,18 @@ public class ItemStorageImMemoryImpl implements ItemStorage {
     }
 
     @Override
-    public Optional<Item> findItemById(Integer itemId) {
+    public Optional<Item> findById(Integer itemId) {
         return Optional.ofNullable(items.get(itemId));
     }
 
     @Override
-    public Collection<Item> getAllUserItems(Integer userId) {
+    public Collection<Item> findByOwner(Integer userId) {
         return userItems.get(userId);
     }
 
 
     @Override
-    public Collection<Item> findItemByNameOrDescription(String text) {
+    public Collection<Item> findByNameOrDescription(String text) {
         return items.values().stream()
                 .filter(Item::isAvailable)
                 .filter(item ->

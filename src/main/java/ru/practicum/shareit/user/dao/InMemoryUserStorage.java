@@ -16,53 +16,48 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     @Override
-    public Collection<User> getAllUsers() {
+    public Collection<User> findAll() {
         return users.values();
     }
 
     @Override
-    public User saveUser(User user) {
-        checkEmailUniq(user.getEmail());
+    public User save(User user) {
+        checkEmailUniqueness(user);
+        if (user.getId() == null) {
         user.setId(idCounter);
+            idCounter++;
+        }
         users.put(user.getId(), user);
-        idCounter++;
         userMails.add(user.getEmail());
         return user;
     }
 
-    @Override
-    public Optional<User> updateUser(Integer userId, User user) {
-        if (users.containsKey(userId)) {
-            user.setId(userId);
 
-            String originalEmail = users.get(userId).getEmail();
-            String newEmail = user.getEmail();
-            if (!originalEmail.equals(newEmail)) {
-                checkEmailUniq(newEmail);
-                userMails.remove(originalEmail);
-                userMails.add(newEmail);
-            }
-
-            users.put(userId, user);
-            return Optional.of(user);
-        }
-        return Optional.empty();
-    }
 
     @Override
-    public Optional<User> findUserById(Integer id) {
+    public Optional<User> findById(Integer id) {
         return Optional.ofNullable(users.get(id));
     }
 
 
-    private void checkEmailUniq(String email) {
-        if (userMails.contains(email)) {
-            throw new NonUniqueEmail(String.format("Email = %s address already in use", email));
+    private void checkEmailUniqueness(User user) {
+        if (user.getId() == null && userMails.contains(user.getEmail())) {
+            throw new NonUniqueEmail(String.format("Email = %s address already in use", user.getEmail()));
         }
+        if (user.getId() != null) {
+            String originalEmail = users.get(user.getId()).getEmail();
+            String newEmail = user.getEmail();
+            if (!originalEmail.equalsIgnoreCase(newEmail) && userMails.contains(user.getEmail())) {
+                throw new NonUniqueEmail(String.format("Email = %s address already in use", user.getEmail()));
+            }
+            userMails.remove(originalEmail);
+            userMails.add(newEmail);
+        }
+
     }
 
     @Override
-    public void deleteUserById(Integer id) {
+    public void deleteById(Integer id) {
         String userMail = users.get(id).getEmail();
         userMails.remove(userMail);
         users.remove(id);

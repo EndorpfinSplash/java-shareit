@@ -5,6 +5,7 @@ import ru.practicum.shareit.user.dto.UserOutputDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 public class UserMapper {
+
     public static UserOutputDto toUserOutputDto(User user) {
         return new UserOutputDto(
                 user.getId(),
@@ -22,6 +23,7 @@ public class UserMapper {
 
     public static User toUser(User userForUpdate, UserUpdateDto userUpdateDto) {
         User user = userForUpdate.toBuilder().build();
+        user.setId(userForUpdate.getId());
         String email = userUpdateDto.getEmail();
         if (email != null) {
             user.setEmail(email);
