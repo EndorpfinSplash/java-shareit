@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -34,6 +35,10 @@ public class Item {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "OWNER_ID")
     private User owner;
+
+    @ManyToOne
+    @JoinColumn(name = "REQUEST_ID")
+    private ItemRequest request;
 
     public Boolean isAvailable() {
         return available;

@@ -14,5 +14,4 @@ public class ItemRequestOutputDto {
     private String description;
     private UserOutputDto requestor;
     private LocalDateTime created;
-
 }
