@@ -1,6 +1,10 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
@@ -40,10 +44,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<RequestWithItemsOutputDto> getAllUserItemRequestsWithListOfResponsedItems(Integer requestorId) {
-        User requestor = userRepository.findById(requestorId).orElseThrow(() ->
+        userRepository.findById(requestorId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("User with id {0} not found", requestorId)));
 
-        List<ItemRequest> allRequestsOfRequestor = itemRequestRepository.findAllByRequestorId(requestorId);
+        List<ItemRequest> allRequestsOfRequestor = itemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(requestorId);
 
         List<RequestWithItemsOutputDto> requestsWithItemsOutputDto = allRequestsOfRequestor.stream()
                 .map(itemRequest -> {
@@ -55,6 +59,26 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 })
                 .collect(Collectors.toList());
         return requestsWithItemsOutputDto;
+    }
+
+    @Override
+    public List<ItemRequestOutputDto> getAllItemRequests(Integer from, Integer size) {
+        Sort sortByCreatedDesc = Sort.by(Sort.Direction.ASC, "created");
+        Pageable page = PageRequest.of(from > 0 ? from / size : 0, size, sortByCreatedDesc);
+        Page<ItemRequest> allItemRequestOrderByCreatedDesc = itemRequestRepository.findAll(page);
+        return allItemRequestOrderByCreatedDesc.stream()
+                .map(ItemRequestMapper::toItemRequestOutputDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public RequestWithItemsOutputDto getItemRequestByIdWithResponses(Integer itemRequestId) {
+        ItemRequest itemRequest = itemRequestRepository.getReferenceById(itemRequestId);
+        List<Item> itemsByRequestId = itemRepository.findByRequestId(itemRequestId);
+        List<ItemForRequestorOutputDto> itemsForRequestorOutputDto = itemsByRequestId.stream()
+                .map(ItemMapper::toItemForRequestorOutputDto)
+                .collect(Collectors.toList());
+        return ItemRequestMapper.toRequestWithItemsOutputDto(itemRequest, itemsForRequestorOutputDto);
     }
 
 }

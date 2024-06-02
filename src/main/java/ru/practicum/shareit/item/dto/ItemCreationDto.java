@@ -20,4 +20,6 @@ public class ItemCreationDto {
     private String description;
     @NotNull
     private Boolean available;
+
+    private Integer requestId;
 }

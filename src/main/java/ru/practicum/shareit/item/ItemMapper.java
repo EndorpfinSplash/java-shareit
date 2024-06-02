@@ -22,13 +22,18 @@ public class ItemMapper {
         if (itemCreationDto.getName().isBlank() || itemCreationDto.getDescription() == null || itemCreationDto.getAvailable() == null) {
             throw new ValidationException("Item body contains empty fields!");
         }
-
-        return Item.builder()
+        Item item = Item.builder()
                 .name(itemCreationDto.getName())
                 .description(itemCreationDto.getDescription())
                 .available(itemCreationDto.getAvailable())
                 .owner(user)
                 .build();
+
+        Integer requestId = itemCreationDto.getRequestId();
+        if (requestId != null) {
+            item.setId(requestId);
+        }
+        return item;
     }
 
     public static Item toItem(Item itemForUpdate, ItemUpdateDto itemUpdateDto, User user) {
@@ -41,6 +46,11 @@ public class ItemMapper {
         String itemNewName = itemUpdateDto.getName();
         if (itemNewName != null) {
             item.setName(itemNewName);
+        }
+
+        Integer requestId = itemUpdateDto.getRequestId();
+        if (requestId != null) {
+            item.setId(requestId);
         }
 
         String itemNewDescription = itemUpdateDto.getDescription();

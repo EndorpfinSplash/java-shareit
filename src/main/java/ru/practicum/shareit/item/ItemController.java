@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.Dto.CommentCreationDto;
 import ru.practicum.shareit.comment.Dto.CommentOutputDto;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.dto.ItemUserOutputDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -19,6 +21,7 @@ import java.util.Collections;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class ItemController {
     private final ItemService itemService;
 
@@ -53,18 +56,26 @@ public class ItemController {
 
 
     @GetMapping
-    public Collection<ItemUserOutputDto> getAllUserItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public Collection<ItemUserOutputDto> getAllUserItems(
+            @RequestHeader("X-Sharer-User-Id") Integer userId,
+            @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(value = "size", defaultValue = "10") Integer size
+    ) {
         log.info("GET request to get all items from user {}", userId);
-        return itemService.getAllUserItems(userId);
+        return itemService.getAllUserItems(userId, from, size);
     }
 
     @GetMapping("/search")
-    public Collection<ItemOutputDto> findItemByNameOrDescription(@RequestParam(value = "text") String text) {
+    public Collection<ItemOutputDto> findItemByNameOrDescription(
+            @RequestParam(value = "text") String text,
+            @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(value = "size", defaultValue = "10") Integer size
+    ) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
         }
         log.info("GET request to search items by name or description id {}", text);
-        return itemService.getItemByNameOrDescription(text);
+        return itemService.getItemByNameOrDescription(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

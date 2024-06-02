@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -96,7 +98,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingOutputDto> findAllBookerBookingsWithState(Integer bookerId, String state) {
+    public List<BookingOutputDto> findAllBookerBookingsWithState(Integer bookerId, String state, Integer from, Integer size) {
+
         userRepository.findById(bookerId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("Booker with id {0} not found", bookerId)));
         List<Booking> res = new ArrayList<>();
@@ -107,24 +110,29 @@ public class BookingServiceImpl implements BookingService {
         } catch (IllegalArgumentException e) {
             throw new UnknownBookingState(state);
         }
+
+//        Sort sortByStartDesc = Sort.by(Sort.Direction.DESC, "start");
+        Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
         switch (reqStatus) {
             case ALL:
-                res = bookingRepository.findByBooker_IdOrderByStartDesc(bookerId);
+                res = bookingRepository.findByBooker_IdOrderByStartDesc(bookerId, page);
                 break;
             case WAITING:
             case REJECTED:
-                res = bookingRepository.findByBooker_IdAndBookingStatusOrderByStartDesc(bookerId,
-                        BookingStatus.valueOf(reqStatus.name())
+                res = bookingRepository.findByBooker_IdAndBookingStatusOrderByStartDesc(
+                        bookerId,
+                        BookingStatus.valueOf(reqStatus.name()),
+                        page
                 );
                 break;
             case CURRENT:
-                res = bookingRepository.findByBooker_CurrentBookingsOrderByStartDesc(bookerId);
+                res = bookingRepository.findByBooker_CurrentBookingsOrderByStartDesc(bookerId, page);
                 break;
             case PAST:
-                res = bookingRepository.findByBooker_PastBookingsOrderByStartDesc(bookerId);
+                res = bookingRepository.findByBooker_PastBookingsOrderByStartDesc(bookerId, page);
                 break;
             case FUTURE:
-                res = bookingRepository.findByBooker_FutureBookingsOrderByStartDesc(bookerId);
+                res = bookingRepository.findByBooker_FutureBookingsOrderByStartDesc(bookerId, page);
         }
         return res.stream()
                 .map(BookingMapper::toOutBookingDto)
@@ -133,7 +141,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public List<BookingOutputDto> findAllOwnerBookingsWithState(Integer ownerId, String state) {
+    public List<BookingOutputDto> findAllOwnerBookingsWithState(Integer ownerId, String state, Integer from, Integer size) {
 
         userRepository.findById(ownerId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("Owner with id {0} not found", ownerId)));
@@ -145,23 +153,27 @@ public class BookingServiceImpl implements BookingService {
         } catch (IllegalArgumentException e) {
             throw new UnknownBookingState(state);
         }
-
+        Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
         switch (reqStatus) {
             case ALL:
-                res = bookingRepository.findAllByOwner(ownerId);
+                res = bookingRepository.findAllByOwner(ownerId, page);
                 break;
             case WAITING:
             case REJECTED:
-                res = bookingRepository.findByOwnerAndStatus(ownerId, BookingStatus.valueOf(reqStatus.name()));
+                res = bookingRepository.findByOwnerAndStatus(
+                        ownerId,
+                        BookingStatus.valueOf(reqStatus.name()),
+                        page
+                );
                 break;
             case CURRENT:
-                res = bookingRepository.findByOwnerCurrentBookingsOrderByStartDesc(ownerId);
+                res = bookingRepository.findByOwnerCurrentBookingsOrderByStartDesc(ownerId, page);
                 break;
             case PAST:
-                res = bookingRepository.findByOwnerPast(ownerId);
+                res = bookingRepository.findByOwnerPast(ownerId, page);
                 break;
             case FUTURE:
-                res = bookingRepository.findByOwnerFuture(ownerId);
+                res = bookingRepository.findByOwnerFuture(ownerId, page);
         }
         return res.stream()
                 .map(BookingMapper::toOutBookingDto)

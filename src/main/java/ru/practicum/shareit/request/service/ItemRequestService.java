@@ -10,4 +10,8 @@ public interface ItemRequestService {
     ItemRequestOutputDto createItemRequest(Integer requestor, ItemRequestCreationDto itemRequestCreationDto);
 
     List<RequestWithItemsOutputDto> getAllUserItemRequestsWithListOfResponsedItems(Integer requestorId);
+
+    List<ItemRequestOutputDto> getAllItemRequests(Integer from, Integer size);
+
+    RequestWithItemsOutputDto getItemRequestByIdWithResponses(Integer itemRequestId);
 }

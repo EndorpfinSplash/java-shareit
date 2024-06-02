@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dao.BookingRepository;
@@ -87,9 +89,10 @@ public class ItemServiceImpl implements ItemService {
         return userItemOutDto;
     }
 
-    public Collection<ItemUserOutputDto> getAllUserItems(Integer userId) {
+    public Collection<ItemUserOutputDto> getAllUserItems(Integer userId, Integer from, Integer size) {
         Collection<ItemUserOutputDto> result = new ArrayList<>();
-        itemStorage.findByOwner_Id(userId).forEach(
+        Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
+        itemStorage.findByOwner_Id(userId, page).forEach(
                 item -> {
                     Integer itemId = item.getId();
                     List<CommentOutputDto> commentsByItemId = commentRepository.getCommentsByItemId(itemId);
@@ -104,8 +107,9 @@ public class ItemServiceImpl implements ItemService {
         return result;
     }
 
-    public Collection<ItemOutputDto> getItemByNameOrDescription(String text) {
-        return itemStorage.findByNameOrDescription(text).stream()
+    public Collection<ItemOutputDto> getItemByNameOrDescription(String text, Integer from, Integer size) {
+        Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
+        return itemStorage.findByNameOrDescription(text, page).stream()
                 .map(ItemMapper::toItemOutDto)
                 .collect(Collectors.toList());
     }

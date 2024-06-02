@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -29,7 +28,7 @@ public class ItemRequest {
     @JoinColumn(name = "REQUESTOR_ID")
     private User requestor;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @Column()
+    //    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Column(name = "CREATION_DATE")
     private LocalDateTime created;
 }
