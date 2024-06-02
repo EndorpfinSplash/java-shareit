@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 public class RequestWithItemsOutputDto {
 
-    //    private Integer requestId;
+    private Integer id;
     private String description;
     private LocalDateTime created;
     private List<ItemForRequestorOutputDto> items;

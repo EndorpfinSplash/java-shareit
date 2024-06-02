@@ -60,8 +60,9 @@ public class ItemRequestController {
     public RequestWithItemsOutputDto getItemRequestWithListOfResponsedItems(
             @PathVariable(name = "requestId") Integer requestId,
             @RequestHeader("X-Sharer-User-Id") Integer requestorId) {
+
         log.info("GET request from requestor_id={} to get info about request_id={} .", requestorId, requestId);
-        RequestWithItemsOutputDto result = itemRequestService.getItemRequestByIdWithResponses(requestId);
+        RequestWithItemsOutputDto result = itemRequestService.getItemRequestByIdWithResponses(requestorId, requestId);
         log.info("GET request for requestor_id={} with his all requests responses received.", requestorId);
         return result;
     }

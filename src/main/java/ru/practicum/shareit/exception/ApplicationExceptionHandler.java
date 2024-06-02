@@ -42,6 +42,7 @@ public class ApplicationExceptionHandler {
             UserNotFoundException.class,
             ItemNotFoundException.class,
             BookingNotFoundException.class,
+            ItemRequestNotFoundException.class,
             BookingAccessDeniedException.class,
             BookingStatusCanChaneOnlyOwner.class
     })

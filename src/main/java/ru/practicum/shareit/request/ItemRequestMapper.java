@@ -31,6 +31,7 @@ public class ItemRequestMapper {
     public static RequestWithItemsOutputDto toRequestWithItemsOutputDto(ItemRequest itemRequest,
                                                                         List<ItemForRequestorOutputDto> allItemsForRequest) {
         return RequestWithItemsOutputDto.builder()
+                .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated())
                 .items(allItemsForRequest)

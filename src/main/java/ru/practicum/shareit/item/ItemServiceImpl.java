@@ -12,16 +12,15 @@ import ru.practicum.shareit.comment.CommentMapper;
 import ru.practicum.shareit.comment.CommentRepository;
 import ru.practicum.shareit.comment.Dto.CommentCreationDto;
 import ru.practicum.shareit.comment.Dto.CommentOutputDto;
-import ru.practicum.shareit.exception.CommentForbidden;
-import ru.practicum.shareit.exception.ItemCouldntBeModified;
-import ru.practicum.shareit.exception.ItemNotFoundException;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemCreationDto;
 import ru.practicum.shareit.item.dto.ItemOutputDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.dto.ItemUserOutputDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.dao.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.UserRepository;
 
@@ -46,11 +45,18 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingStorage;
 
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     public ItemOutputDto createItem(Integer userId, ItemCreationDto itemCreationDto) {
         User user = userStorage.findById(userId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("User with id {0} not found", userId)));
-        Item item = ItemMapper.toItem(itemCreationDto, user);
+        Integer requestItemId = itemCreationDto.getRequestId();
+        ItemRequest itemRequest = null;
+        if (requestItemId != null) {
+            itemRequest = itemRequestRepository.findById(requestItemId).orElseThrow(() ->
+                    new ItemRequestNotFoundException(MessageFormat.format("ItemRequest with id= {0} not found", requestItemId)));
+        }
+        Item item = ItemMapper.toItem(itemCreationDto, user, itemRequest);
         Item savedItem = itemStorage.save(item);
         return ItemMapper.toItemOutDto(savedItem);
     }

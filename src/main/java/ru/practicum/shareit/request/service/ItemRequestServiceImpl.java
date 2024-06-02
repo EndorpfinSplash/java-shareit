@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dao.ItemRepository;
@@ -45,7 +46,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<RequestWithItemsOutputDto> getAllUserItemRequestsWithListOfResponsedItems(Integer requestorId) {
         userRepository.findById(requestorId).orElseThrow(() ->
-                new UserNotFoundException(MessageFormat.format("User with id {0} not found", requestorId)));
+                new UserNotFoundException(MessageFormat.format("User with id={0} not found", requestorId)));
 
         List<ItemRequest> allRequestsOfRequestor = itemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(requestorId);
 
@@ -72,8 +73,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public RequestWithItemsOutputDto getItemRequestByIdWithResponses(Integer itemRequestId) {
-        ItemRequest itemRequest = itemRequestRepository.getReferenceById(itemRequestId);
+    public RequestWithItemsOutputDto getItemRequestByIdWithResponses(Integer requestorId, Integer itemRequestId) {
+        userRepository.findById(requestorId).orElseThrow(() ->
+                new UserNotFoundException(MessageFormat.format("User with id {0} not found", requestorId)));
+        ItemRequest itemRequest = itemRequestRepository.findById(itemRequestId).orElseThrow(() ->
+                new ItemRequestNotFoundException(MessageFormat.format("ItemRequest with id= {0} not found", itemRequestId)));
         List<Item> itemsByRequestId = itemRepository.findByRequestId(itemRequestId);
         List<ItemForRequestorOutputDto> itemsForRequestorOutputDto = itemsByRequestId.stream()
                 .map(ItemMapper::toItemForRequestorOutputDto)
