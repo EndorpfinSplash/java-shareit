@@ -63,10 +63,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestOutputDto> getAllItemRequests(Integer from, Integer size) {
+    public List<ItemRequestOutputDto> getAllItemRequests(Integer userId, Integer from, Integer size) {
         Sort sortByCreatedDesc = Sort.by(Sort.Direction.ASC, "created");
         Pageable page = PageRequest.of(from > 0 ? from / size : 0, size, sortByCreatedDesc);
-        Page<ItemRequest> allItemRequestOrderByCreatedDesc = itemRequestRepository.findAll(page);
+        Page<ItemRequest> allItemRequestOrderByCreatedDesc = itemRequestRepository.findAllByRequestor_IdNot(userId, page);
         return allItemRequestOrderByCreatedDesc.stream()
                 .map(ItemRequestMapper::toItemRequestOutputDto)
                 .collect(Collectors.toList());

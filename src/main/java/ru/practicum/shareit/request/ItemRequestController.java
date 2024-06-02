@@ -51,7 +51,7 @@ public class ItemRequestController {
             @RequestParam(value = "size", defaultValue = "10") Integer size
     ) {
         log.info("GET all request from user_id={} received with params from={} and size={}.", userId, from, size);
-        List<ItemRequestOutputDto> result = itemRequestService.getAllItemRequests(from, size);
+        List<ItemRequestOutputDto> result = itemRequestService.getAllItemRequests(userId, from, size);
         log.info("GET all item requests for user_id={} created.", userId);
         return result;
     }
