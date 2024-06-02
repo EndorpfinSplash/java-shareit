@@ -45,13 +45,13 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<ItemRequestOutputDto> getAllItemRequests(
+    public List<RequestWithItemsOutputDto> getAllItemRequests(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(value = "size", defaultValue = "10") Integer size
     ) {
         log.info("GET all request from user_id={} received with params from={} and size={}.", userId, from, size);
-        List<ItemRequestOutputDto> result = itemRequestService.getAllItemRequests(userId, from, size);
+        List<RequestWithItemsOutputDto> result = itemRequestService.getAllItemRequests(userId, from, size);
         log.info("GET all item requests for user_id={} created.", userId);
         return result;
     }

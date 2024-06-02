@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -48,9 +47,23 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userRepository.findById(requestorId).orElseThrow(() ->
                 new UserNotFoundException(MessageFormat.format("User with id={0} not found", requestorId)));
 
-        List<ItemRequest> allRequestsOfRequestor = itemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(requestorId);
+        List<ItemRequest> allRequestsOfRequestorOrderByCreatedDesc = itemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(requestorId);
 
-        List<RequestWithItemsOutputDto> requestsWithItemsOutputDto = allRequestsOfRequestor.stream()
+        return enReachRequestsWithResponsedItemsOutputDtos(allRequestsOfRequestorOrderByCreatedDesc);
+    }
+
+    @Override
+    public List<RequestWithItemsOutputDto> getAllItemRequests(Integer userId, Integer from, Integer size) {
+        Sort sortByCreatedDesc = Sort.by(Sort.Direction.ASC, "created");
+        Pageable page = PageRequest.of(from > 0 ? from / size : 0, size, sortByCreatedDesc);
+        List<ItemRequest> allOthersItemRequestOrderByCreatedDesc = itemRequestRepository.findAllByRequestor_IdNot(userId, page);
+
+        return enReachRequestsWithResponsedItemsOutputDtos(allOthersItemRequestOrderByCreatedDesc);
+
+    }
+
+    private List<RequestWithItemsOutputDto> enReachRequestsWithResponsedItemsOutputDtos(List<ItemRequest> itemRequests) {
+        List<RequestWithItemsOutputDto> requestsWithItemsOutputDto = itemRequests.stream()
                 .map(itemRequest -> {
                     List<Item> itemsListByRequestId = itemRepository.findByRequestId(itemRequest.getId());
                     List<ItemForRequestorOutputDto> itemsForRequestOfRequestorOutputDto = itemsListByRequestId.stream()
@@ -60,16 +73,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 })
                 .collect(Collectors.toList());
         return requestsWithItemsOutputDto;
-    }
-
-    @Override
-    public List<ItemRequestOutputDto> getAllItemRequests(Integer userId, Integer from, Integer size) {
-        Sort sortByCreatedDesc = Sort.by(Sort.Direction.ASC, "created");
-        Pageable page = PageRequest.of(from > 0 ? from / size : 0, size, sortByCreatedDesc);
-        Page<ItemRequest> allItemRequestOrderByCreatedDesc = itemRequestRepository.findAllByRequestor_IdNot(userId, page);
-        return allItemRequestOrderByCreatedDesc.stream()
-                .map(ItemRequestMapper::toItemRequestOutputDto)
-                .collect(Collectors.toList());
     }
 
     @Override
