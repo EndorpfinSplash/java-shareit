@@ -59,7 +59,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<ItemRequest> allOthersItemRequestOrderByCreatedDesc = itemRequestRepository.findAllByRequestor_IdNot(userId, page);
 
         return enReachRequestsWithResponsedItemsOutputDtos(allOthersItemRequestOrderByCreatedDesc);
-
     }
 
     private List<RequestWithItemsOutputDto> enReachRequestsWithResponsedItemsOutputDtos(List<ItemRequest> itemRequests) {
