@@ -32,11 +32,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class BookingControllerTest {
-    public static final String PARAM_BOOKING_STATE = "ALL";
-    public static final int PARAM_IDX_FROM = 1;
-    public static final int PARAM_PAGE_SIZE = 10;
-    final static Integer BOOKER_USER_ID = 1;
-    final static Integer BOOKING_ID = 1;
+    private final String paramBookingState = "ALL";
+    private final int paramIdxFrom = 1;
+    private final int paramPageSize = 10;
+    private final Integer bookerUserId = 1;
+    private final Integer bookingId = 1;
 
     @InjectMocks
     BookingController bookingController;
@@ -63,7 +63,7 @@ class BookingControllerTest {
                 .standaloneSetup(bookingController)
                 .build();
 
-        User testBookerUser = User.builder().id(BOOKER_USER_ID).build();
+        User testBookerUser = User.builder().id(bookerUserId).build();
         Item testItem = new Item();
         LocalDateTime startTime = LocalDateTime.now().plusHours(5);
         LocalDateTime endTime = LocalDateTime.now().plusDays(1);
@@ -75,7 +75,7 @@ class BookingControllerTest {
                 .build();
 
         bookingOutputDto = BookingOutputDto.builder()
-                .id(BOOKING_ID)
+                .id(bookingId)
                 .start(startTime)
                 .end(endTime)
                 .item(testItem)
@@ -93,7 +93,7 @@ class BookingControllerTest {
 
         mockMvc.perform(post("/bookings")
                         .content(mapper.writeValueAsString(bookingCreationDTO))
-                        .header("X-Sharer-User-Id", BOOKER_USER_ID)
+                        .header("X-Sharer-User-Id", bookerUserId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -101,7 +101,7 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.id", is(bookingOutputDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.item", is(bookingOutputDto.getItem()), Item.class))
                 .andExpect(jsonPath("$.booker", is(bookingOutputDto.getBooker()), User.class));
-        verify(bookingService, times(1)).createBooking(bookingCreationDTO, BOOKER_USER_ID);
+        verify(bookingService, times(1)).createBooking(bookingCreationDTO, bookerUserId);
     }
 
     @Test
@@ -109,16 +109,16 @@ class BookingControllerTest {
         when(bookingService.changeApproveBooking(anyInt(), anyInt(), anyBoolean()))
                 .thenReturn(bookingOutputDto);
 
-        mockMvc.perform(patch("/bookings/{bookingId}", BOOKING_ID)
+        mockMvc.perform(patch("/bookings/{bookingId}", bookingId)
                         .param("approved", "true")
-                        .header("X-Sharer-User-Id", BOOKER_USER_ID)
+                        .header("X-Sharer-User-Id", bookerUserId)
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(bookingOutputDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.item", is(bookingOutputDto.getItem()), Item.class))
                 .andExpect(jsonPath("$.booker", is(bookingOutputDto.getBooker()), User.class));
-        verify(bookingService, times(1)).changeApproveBooking(BOOKING_ID, BOOKER_USER_ID, true);
+        verify(bookingService, times(1)).changeApproveBooking(bookingId, bookerUserId, true);
     }
 
     @Test
@@ -126,8 +126,8 @@ class BookingControllerTest {
         when(bookingService.getBooking(anyInt(), anyInt()))
                 .thenReturn(bookingOutputDto);
 
-        mockMvc.perform(get("/bookings/{bookingId}", BOOKING_ID)
-                        .header("X-Sharer-User-Id", BOOKER_USER_ID)
+        mockMvc.perform(get("/bookings/{bookingId}", bookingId)
+                        .header("X-Sharer-User-Id", bookerUserId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON)
                 )
@@ -135,7 +135,7 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.id", is(bookingOutputDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.item", is(bookingOutputDto.getItem()), Item.class))
                 .andExpect(jsonPath("$.booker", is(bookingOutputDto.getBooker()), User.class));
-        verify(bookingService, times(1)).getBooking(BOOKER_USER_ID, BOOKING_ID);
+        verify(bookingService, times(1)).getBooking(bookerUserId, bookingId);
 
     }
 
@@ -145,20 +145,20 @@ class BookingControllerTest {
                 .thenReturn(bookingsOutputDtos);
 
         mockMvc.perform(get("/bookings")
-                        .param("state", PARAM_BOOKING_STATE)
-                        .param("from", String.valueOf(PARAM_IDX_FROM))
-                        .param("size", String.valueOf(PARAM_PAGE_SIZE))
-                        .header("X-Sharer-User-Id", BOOKER_USER_ID)
+                        .param("state", paramBookingState)
+                        .param("from", String.valueOf(paramIdxFrom))
+                        .param("size", String.valueOf(paramPageSize))
+                        .header("X-Sharer-User-Id", bookerUserId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
         verify(bookingService, times(1))
                 .findAllBookerBookingsWithState(
-                        BOOKER_USER_ID,
-                        PARAM_BOOKING_STATE,
-                        PARAM_IDX_FROM,
-                        PARAM_PAGE_SIZE
+                        bookerUserId,
+                        paramBookingState,
+                        paramIdxFrom,
+                        paramPageSize
                 );
     }
 
@@ -168,20 +168,20 @@ class BookingControllerTest {
                 .thenReturn(bookingsOutputDtos);
 
         mockMvc.perform(get("/bookings/owner")
-                        .param("state", PARAM_BOOKING_STATE)
-                        .param("from", String.valueOf(PARAM_IDX_FROM))
-                        .param("size", String.valueOf(PARAM_PAGE_SIZE))
-                        .header("X-Sharer-User-Id", BOOKER_USER_ID)
+                        .param("state", paramBookingState)
+                        .param("from", String.valueOf(paramIdxFrom))
+                        .param("size", String.valueOf(paramPageSize))
+                        .header("X-Sharer-User-Id", bookerUserId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
         verify(bookingService, times(1))
                 .findAllOwnerBookingsWithState(
-                        BOOKER_USER_ID,
-                        PARAM_BOOKING_STATE,
-                        PARAM_IDX_FROM,
-                        PARAM_PAGE_SIZE
+                        bookerUserId,
+                        paramBookingState,
+                        paramIdxFrom,
+                        paramPageSize
                 );
     }
 }

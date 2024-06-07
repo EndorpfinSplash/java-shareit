@@ -35,12 +35,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class ItemControllerTest {
-    private final Integer USER_ID = 10;
-    private final Integer ITEM_ID = 1;
-    public static final String TEST_ITEM_NAME = "Test Item";
-    public static final String TEST_ITEM_DESCRIPTION = "Test description";
-    public static final int PARAM_IDX_FROM = 1;
-    public static final int PARAM_PAGE_SIZE = 10;
+    private final Integer userId = 10;
+    private final Integer itemId = 1;
+    private final int paramIdxFrom = 0;
+    private final int paramPageSize = 10;
     @InjectMocks
     private ItemController itemController;
 
@@ -61,21 +59,23 @@ class ItemControllerTest {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(itemController).build();
+        String testItemName = "Test Item";
+        String testItemDescription = "Test description";
         itemOutputDto = ItemOutputDto.builder()
-                .id(ITEM_ID)
-                .name(TEST_ITEM_NAME)
-                .description(TEST_ITEM_DESCRIPTION)
+                .id(itemId)
+                .name(testItemName)
+                .description(testItemDescription)
                 .available(true)
                 .build();
         itemCreationDto = ItemCreationDto.builder()
-                .name(TEST_ITEM_NAME)
-                .description(TEST_ITEM_DESCRIPTION)
+                .name(testItemName)
+                .description(testItemDescription)
                 .available(true)
                 .build();
         itemUserOutputDto = ItemUserOutputDto.builder()
-                .id(ITEM_ID)
-                .name(TEST_ITEM_NAME)
-                .description(TEST_ITEM_DESCRIPTION)
+                .id(itemId)
+                .name(testItemName)
+                .description(testItemDescription)
                 .available(true)
                 .build();
 
@@ -90,7 +90,7 @@ class ItemControllerTest {
 
         mockMvc.perform(post("/items")
                         .content(mapper.writeValueAsString(itemCreationDto))
-                        .header("X-Sharer-User-Id", USER_ID)
+                        .header("X-Sharer-User-Id", userId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -98,7 +98,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.id", is(itemOutputDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.bookingStatus", is(itemOutputDto.getBookingStatus()), BookingStatus.class))
                 .andExpect(jsonPath("$.owner", is(itemOutputDto.getOwner()), User.class));
-        verify(itemService, times(1)).createItem(USER_ID, itemCreationDto);
+        verify(itemService, times(1)).createItem(userId, itemCreationDto);
     }
 
     @Test
@@ -111,9 +111,9 @@ class ItemControllerTest {
         when(itemService.updateItem(anyInt(), anyInt(), any(ItemUpdateDto.class)))
                 .thenReturn(itemOutputDto);
 
-        mockMvc.perform(patch("/items/{itemId}", ITEM_ID)
+        mockMvc.perform(patch("/items/{itemId}", itemId)
                         .content(mapper.writeValueAsString(itemUpdateDto))
-                        .header("X-Sharer-User-Id", USER_ID)
+                        .header("X-Sharer-User-Id", userId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -121,7 +121,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.id", is(itemOutputDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.bookingStatus", is(itemOutputDto.getBookingStatus()), BookingStatus.class))
                 .andExpect(jsonPath("$.owner", is(itemOutputDto.getOwner()), User.class));
-        verify(itemService, times(1)).updateItem(ITEM_ID, USER_ID, itemUpdateDto);
+        verify(itemService, times(1)).updateItem(itemId, userId, itemUpdateDto);
     }
 
     @Test
@@ -129,8 +129,8 @@ class ItemControllerTest {
         when(itemService.getItemById(anyInt(), anyInt()))
                 .thenReturn(itemUserOutputDto);
 
-        mockMvc.perform(get("/items/{itemId}", ITEM_ID)
-                        .header("X-Sharer-User-Id", USER_ID)
+        mockMvc.perform(get("/items/{itemId}", itemId)
+                        .header("X-Sharer-User-Id", userId)
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
                 .andExpect(status().isOk())
@@ -138,7 +138,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.comments", is(itemUserOutputDto.getComments()), List.class))
                 .andExpect(jsonPath("$.lastBooking", is(itemUserOutputDto.getLastBooking()), ShortBookingView.class))
                 .andExpect(jsonPath("$.nextBooking", is(itemUserOutputDto.getNextBooking()), ShortBookingView.class));
-        verify(itemService, times(1)).getItemById(ITEM_ID, USER_ID);
+        verify(itemService, times(1)).getItemById(itemId, userId);
     }
 
     @Test
@@ -147,14 +147,14 @@ class ItemControllerTest {
                 .thenReturn(itemUserOutputDtoList);
 
         mockMvc.perform(get("/items")
-                        .param("from", String.valueOf(PARAM_IDX_FROM))
-                        .param("size", String.valueOf(PARAM_PAGE_SIZE))
-                        .header("X-Sharer-User-Id", USER_ID)
+                        .param("from", String.valueOf(paramIdxFrom))
+                        .param("size", String.valueOf(paramPageSize))
+                        .header("X-Sharer-User-Id", userId)
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
                 .andExpect(status().isOk());
 
-        verify(itemService, times(1)).getAllUserItems(USER_ID, PARAM_IDX_FROM, PARAM_PAGE_SIZE);
+        verify(itemService, times(1)).getAllUserItems(userId, paramIdxFrom, paramPageSize);
     }
 
     @Test
@@ -165,14 +165,14 @@ class ItemControllerTest {
 
         mockMvc.perform(get("/items/search")
                         .param("text", searchRequest)
-                        .param("from", String.valueOf(PARAM_IDX_FROM))
-                        .param("size", String.valueOf(PARAM_PAGE_SIZE))
-                        .header("X-Sharer-User-Id", USER_ID)
+                        .param("from", String.valueOf(paramIdxFrom))
+                        .param("size", String.valueOf(paramPageSize))
+                        .header("X-Sharer-User-Id", userId)
                         .characterEncoding(StandardCharsets.UTF_8)
                 )
                 .andExpect(status().isOk());
 
-        verify(itemService, times(1)).getItemByNameOrDescription(searchRequest, PARAM_IDX_FROM, PARAM_PAGE_SIZE);
+        verify(itemService, times(1)).getItemByNameOrDescription(searchRequest, paramIdxFrom, paramPageSize);
     }
 
     @Test
@@ -189,14 +189,14 @@ class ItemControllerTest {
         when(itemService.saveComment(anyInt(), anyInt(), any(CommentCreationDto.class)))
                 .thenReturn(commentOutputDto);
 
-        mockMvc.perform(post("/items/{itemId}/comment", ITEM_ID)
+        mockMvc.perform(post("/items/{itemId}/comment", itemId)
                         .content(mapper.writeValueAsString(commentCreationDto))
-                        .header("X-Sharer-User-Id", USER_ID)
+                        .header("X-Sharer-User-Id", userId)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        verify(itemService, times(1)).saveComment(USER_ID, ITEM_ID, commentCreationDto);
+        verify(itemService, times(1)).saveComment(userId, itemId, commentCreationDto);
     }
 }

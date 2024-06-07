@@ -9,16 +9,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserMapperTest {
-    static final String TEST_USER_NAME = "Test User";
-    static final String TEST_USER_EMAIL = "TEST@EMAIL.com";
+    private final String testUserName = "Test User";
+    private final String testUserEmail = "TEST@EMAIL.com";
 
     @Test
     void toUserOutputDto() {
 
         User testUser = User.builder()
                 .id(1)
-                .name(TEST_USER_NAME)
-                .email(TEST_USER_EMAIL)
+                .name(testUserName)
+                .email(testUserEmail)
                 .build();
         UserOutputDto resultUserOutputDto = UserMapper.toUserOutputDto(testUser);
         assertNotNull(resultUserOutputDto);
@@ -31,13 +31,13 @@ class UserMapperTest {
     @Test
     void toUser() {
         UserCreationDTO originUserCreationDTO = UserCreationDTO.builder()
-                .name(TEST_USER_NAME)
-                .email(TEST_USER_EMAIL)
+                .name(testUserName)
+                .email(testUserEmail)
                 .build();
         User resultUser = UserMapper.toUser(originUserCreationDTO);
         assertNotNull(resultUser);
-        assertEquals(TEST_USER_NAME, resultUser.getName());
-        assertEquals(TEST_USER_EMAIL, resultUser.getEmail());
+        assertEquals(testUserName, resultUser.getName());
+        assertEquals(testUserEmail, resultUser.getEmail());
     }
 
     @Test
@@ -48,14 +48,14 @@ class UserMapperTest {
                 .email("origin@email.com")
                 .build();
         UserUpdateDto userUpdateDto = UserUpdateDto.builder()
-                .name(TEST_USER_NAME)
-                .email(TEST_USER_EMAIL)
+                .name(testUserName)
+                .email(testUserEmail)
                 .build();
         User resultUser = UserMapper.toUser(userForUpdate, userUpdateDto);
 
         assertNotNull(resultUser);
-        assertEquals(TEST_USER_NAME, resultUser.getName());
-        assertEquals(TEST_USER_EMAIL, resultUser.getEmail());
+        assertEquals(testUserName, resultUser.getName());
+        assertEquals(testUserEmail, resultUser.getEmail());
         assertEquals(userForUpdate.getId(), resultUser.getId());
     }
 }
