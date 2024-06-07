@@ -79,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemUserOutputDto getItemById(Integer itemId, Integer userId) {
 
         Item item = itemStorage.findById(itemId).orElseThrow(() ->
-                        new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
+                new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
         );
         List<CommentOutputDto> commentsByItemId = commentRepository.getCommentsByItemId(itemId);
         ItemUserOutputDto userItemOutDto = ItemMapper.toUserItemOutDto(item, commentsByItemId);

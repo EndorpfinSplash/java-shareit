@@ -24,14 +24,13 @@ public class InMemoryUserStorage implements UserStorage {
     public User save(User user) {
         checkEmailUniqueness(user);
         if (user.getId() == null) {
-        user.setId(idCounter);
+            user.setId(idCounter);
             idCounter++;
         }
         users.put(user.getId(), user);
         userMails.add(user.getEmail());
         return user;
     }
-
 
 
     @Override

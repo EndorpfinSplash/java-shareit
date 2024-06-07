@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserMapperTest {
-    final String TEST_USER_NAME = "Test User";
-    final String TEST_USER_EMAIL = "TEST@EMAIL.com";
+    static final String TEST_USER_NAME = "Test User";
+    static final String TEST_USER_EMAIL = "TEST@EMAIL.com";
 
     @Test
     void toUserOutputDto() {
