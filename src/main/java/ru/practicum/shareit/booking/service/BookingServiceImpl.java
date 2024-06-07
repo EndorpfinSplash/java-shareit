@@ -20,7 +20,6 @@ import ru.practicum.shareit.user.dao.UserRepository;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -93,7 +92,8 @@ public class BookingServiceImpl implements BookingService {
         User itemOwner = booking.getItem().getOwner();
         User booker = booking.getBooker();
         if (!Objects.equals(userId, itemOwner.getId()) && !Objects.equals(userId, booker.getId())) {
-            throw new BookingAccessDeniedException(String.format(new Locale("ru", "BY"), "Booking with id=%s could be read only by owner or booker", bookingId));
+            throw new BookingAccessDeniedException(String.format(
+                    "Booking with id=%s could be read only by owner or booker", bookingId));
         }
         return BookingMapper.toOutBookingDto(booking);
     }
