@@ -35,12 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class ItemControllerTest {
-    private final Integer USER_ID = 10;
-    private final Integer ITEM_ID = 1;
-    public static final String TEST_ITEM_NAME = "Test Item";
-    public static final String TEST_ITEM_DESCRIPTION = "Test description";
-    public static final int PARAM_IDX_FROM = 1;
-    public static final int PARAM_PAGE_SIZE = 10;
+    private final static Integer USER_ID = 10;
+    private final static Integer ITEM_ID = 1;
+    private final static String TEST_ITEM_NAME = "Test Item";
+    private final static String TEST_ITEM_DESCRIPTION = "Test description";
+    private final static int PARAM_IDX_FROM = 1;
+    private final static int PARAM_PAGE_SIZE = 10;
     @InjectMocks
     private ItemController itemController;
 

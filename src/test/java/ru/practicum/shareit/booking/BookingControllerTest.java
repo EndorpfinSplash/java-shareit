@@ -32,9 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class BookingControllerTest {
-    public static final String PARAM_BOOKING_STATE = "ALL";
-    public static final int PARAM_IDX_FROM = 1;
-    public static final int PARAM_PAGE_SIZE = 10;
+    final static String PARAM_BOOKING_STATE = "ALL";
+    final static int PARAM_IDX_FROM = 1;
+    final static int PARAM_PAGE_SIZE = 10;
     final static Integer BOOKER_USER_ID = 1;
     final static Integer BOOKING_ID = 1;
 
