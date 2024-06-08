@@ -143,7 +143,7 @@ class ItemControllerTest {
 
     @Test
     void getAllUserItems() throws Exception {
-        when(itemService.getAllUserItems(anyInt(), anyInt(), anyInt()))
+        when(itemService.getUserItems(anyInt(), anyInt(), anyInt()))
                 .thenReturn(itemUserOutputDtoList);
 
         mockMvc.perform(get("/items")
@@ -154,7 +154,7 @@ class ItemControllerTest {
                 )
                 .andExpect(status().isOk());
 
-        verify(itemService, times(1)).getAllUserItems(userId, paramIdxFrom, paramPageSize);
+        verify(itemService, times(1)).getUserItems(userId, paramIdxFrom, paramPageSize);
     }
 
     @Test

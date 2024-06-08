@@ -16,7 +16,7 @@ public interface ItemService {
 
     ItemUserOutputDto getItemById(Integer itemId, Integer userId);
 
-    Collection<ItemUserOutputDto> getAllUserItems(Integer userId, Integer from, Integer size);
+    Collection<ItemUserOutputDto> getUserItems(Integer userId, Integer from, Integer size);
 
     Collection<ItemOutputDto> getItemByNameOrDescription(String text, Integer from, Integer size);
 

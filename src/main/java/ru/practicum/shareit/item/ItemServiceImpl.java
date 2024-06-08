@@ -95,7 +95,7 @@ public class ItemServiceImpl implements ItemService {
         return userItemOutDto;
     }
 
-    public Collection<ItemUserOutputDto> getAllUserItems(Integer userId, Integer from, Integer size) {
+    public Collection<ItemUserOutputDto> getUserItems(Integer userId, Integer from, Integer size) {
         Collection<ItemUserOutputDto> result = new ArrayList<>();
         Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
         itemStorage.findByOwner_Id(userId, page).forEach(

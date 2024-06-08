@@ -127,8 +127,8 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void getAllUserItems() {
-        itemService.getAllUserItems(ownerItem.getId(), 0, 10);
+    void getUserItems() {
+        itemService.getUserItems(ownerItem.getId(), 0, 10);
         verify(itemRepository, times(1)).findByOwner_Id(ownerItem.getId(), PageRequest.of(0, 10));
     }
 

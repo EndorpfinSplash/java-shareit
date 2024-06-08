@@ -62,7 +62,7 @@ public class ItemController {
             @RequestParam(value = "size", defaultValue = "10") Integer size
     ) {
         log.info("GET request to get all items from user {}", userId);
-        return itemService.getAllUserItems(userId, from, size);
+        return itemService.getUserItems(userId, from, size);
     }
 
     @GetMapping("/search")

@@ -12,8 +12,4 @@ class BookingStatusTest {
         Assertions.assertEquals(BookingStatus.REJECTED, BookingStatus.valueOf("REJECTED".toUpperCase()));
         Assertions.assertEquals(BookingStatus.CANCELED, BookingStatus.valueOf("CANCELED".toUpperCase()));
     }
-
-    @Test
-    void valueOf() {
-    }
 }
