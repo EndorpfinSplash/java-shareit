@@ -53,8 +53,6 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler({
             ItemCouldntBeModified.class,
-
-
     })
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse catchCouldNotModifiedItem(final RuntimeException e) {
