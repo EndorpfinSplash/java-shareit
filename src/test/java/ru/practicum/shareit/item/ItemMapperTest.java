@@ -2,7 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.comment.Dto.CommentOutputDto;
+import ru.practicum.shareit.comment.dto.CommentOutputDto;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;

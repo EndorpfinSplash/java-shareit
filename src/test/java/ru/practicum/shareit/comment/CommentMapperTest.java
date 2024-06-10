@@ -2,8 +2,8 @@ package ru.practicum.shareit.comment;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.comment.Dto.CommentCreationDto;
-import ru.practicum.shareit.comment.Dto.CommentOutputDto;
+import ru.practicum.shareit.comment.dto.CommentCreationDto;
+import ru.practicum.shareit.comment.dto.CommentOutputDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 

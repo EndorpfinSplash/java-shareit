@@ -24,10 +24,8 @@ import static org.hamcrest.Matchers.notNullValue;
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class IntegrationItemServiceImplTest {
 
-
     private final UserRepository userRepository;
     private final ItemService itemService;
-
 
     @Test
     void getUserItems() {
