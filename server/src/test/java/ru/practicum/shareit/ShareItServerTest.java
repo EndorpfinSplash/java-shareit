@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ShareItAppTest {
+class ShareItServerTest {
 
     @Test
     void test() {
         Assertions.assertDoesNotThrow(ShareItTests::new);
-        Assertions.assertDoesNotThrow(() -> ShareItApp.main(new String[]{}));
+        Assertions.assertDoesNotThrow(() -> ShareItServer.main(new String[]{}));
     }
 
 }
