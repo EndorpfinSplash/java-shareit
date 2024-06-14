@@ -62,6 +62,6 @@ public class ItemClient extends BaseClient {
                                               Integer itemId,
                                               CommentCreationDto commentCreationDto
     ) {
-        return post("/"+itemId+"/comment", commentatorId, commentCreationDto);
+        return post("/" + itemId + "/comment", commentatorId, commentCreationDto);
     }
 }

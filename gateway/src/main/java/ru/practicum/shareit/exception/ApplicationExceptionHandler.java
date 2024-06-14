@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ApplicationExceptionHandler {
 
 
-
     @ExceptionHandler({
             IllegalArgumentException.class,
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse catchValidation(final RuntimeException e) {
-        return new ErrorResponse( e.getMessage(),
+        return new ErrorResponse(e.getMessage(),
                 "Incorrect booking state was send.");
     }
 
