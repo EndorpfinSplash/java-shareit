@@ -129,7 +129,7 @@ class ItemServiceImplTest {
     @Test
     void getUserItems() {
         itemService.getUserItems(ownerItem.getId(), 0, 10);
-        verify(itemRepository, times(1)).findByOwner_Id(ownerItem.getId(), PageRequest.of(0, 10));
+        verify(itemRepository, times(1)).findByOwner_IdOrderById(ownerItem.getId(), PageRequest.of(0, 10));
     }
 
     @Test

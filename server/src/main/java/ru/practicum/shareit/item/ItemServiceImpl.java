@@ -98,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
     public Collection<ItemUserOutputDto> getUserItems(Integer userId, Integer from, Integer size) {
         Collection<ItemUserOutputDto> result = new ArrayList<>();
         Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
-        itemStorage.findByOwner_Id(userId, page).forEach(
+        itemStorage.findByOwner_IdOrderById(userId, page).forEach(
                 item -> {
                     Integer itemId = item.getId();
                     List<CommentOutputDto> commentsByItemId = commentRepository.getCommentsByItemId(itemId);
