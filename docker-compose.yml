@@ -21,7 +21,7 @@ services:
     depends_on:
       - db
     environment:
-      - TZ=Europe/Minsk
+      - TZ=Europe/Moscow
       - DB_HOTS=db
       - DB_PORT=5432
       - DB_NAME=shareit
@@ -39,7 +39,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - TZ=Europe/Minsk
+      - TZ=Europe/Moscow
       - POSTGRES_DB=shareit
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=12345
