@@ -21,7 +21,7 @@ services:
     depends_on:
       - db
     environment:
-      - DB_HOTS=db
+      - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME=shareit
       - POSTGRES_USER=dbuser
@@ -36,7 +36,7 @@ services:
     volumes:
       - /var/lib/postgresql/data/
     ports:
-      - "5432:5432"
+      - "6541:5432"
     environment:
       - POSTGRES_DB=shareit
       - POSTGRES_USER=dbuser

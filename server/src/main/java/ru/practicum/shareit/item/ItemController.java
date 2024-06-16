@@ -2,7 +2,6 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentCreationDto;
 import ru.practicum.shareit.comment.dto.CommentOutputDto;
@@ -11,23 +10,19 @@ import ru.practicum.shareit.item.dto.ItemOutputDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.dto.ItemUserOutputDto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
-import java.util.Collections;
 
 
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
 @Slf4j
-@Validated
 public class ItemController {
     private final ItemService itemService;
 
 
     @PostMapping
-    public ItemOutputDto createItem(@Valid @RequestBody ItemCreationDto itemCreationDto,
+    public ItemOutputDto createItem(@RequestBody ItemCreationDto itemCreationDto,
                                     @RequestHeader("X-Sharer-User-Id") Integer userId
     ) {
         log.info("POST request to create {} item.", itemCreationDto);
@@ -39,7 +34,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemOutputDto updateItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                    @Valid @RequestBody ItemUpdateDto itemUpdateDto,
+                                    @RequestBody ItemUpdateDto itemUpdateDto,
                                     @PathVariable() Integer itemId) {
         log.info("Patch request to update {} item.", itemUpdateDto);
         ItemOutputDto updatedItem = itemService.updateItem(itemId, userId, itemUpdateDto);
@@ -58,7 +53,7 @@ public class ItemController {
     @GetMapping
     public Collection<ItemUserOutputDto> getAllUserItems(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
-            @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
             @RequestParam(value = "size", defaultValue = "10") Integer size
     ) {
         log.info("GET request to get all items from user {}", userId);
@@ -68,12 +63,9 @@ public class ItemController {
     @GetMapping("/search")
     public Collection<ItemOutputDto> findItemByNameOrDescription(
             @RequestParam(value = "text") String text,
-            @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
             @RequestParam(value = "size", defaultValue = "10") Integer size
     ) {
-        if (text == null || text.isEmpty()) {
-            return Collections.emptyList();
-        }
         log.info("GET request to search items by name or description id {}", text);
         return itemService.getItemByNameOrDescription(text, from, size);
     }
@@ -81,7 +73,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentOutputDto createComment(@RequestHeader("X-Sharer-User-Id") Integer commentatorId,
                                           @PathVariable Integer itemId,
-                                          @Valid @RequestBody CommentCreationDto commentCreationDto
+                                          @RequestBody CommentCreationDto commentCreationDto
     ) {
         return itemService.saveComment(commentatorId, itemId, commentCreationDto);
     }

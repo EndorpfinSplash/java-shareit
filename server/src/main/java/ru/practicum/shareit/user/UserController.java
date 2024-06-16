@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.dto.UserCreationDTO;
 import ru.practicum.shareit.user.dto.UserOutputDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
 
-import javax.validation.Valid;
 import java.util.Collection;
 
 
@@ -32,7 +31,7 @@ public class UserController {
 
 
     @PostMapping
-    public UserOutputDto createUser(@Valid @RequestBody UserCreationDTO userCreationDTO) {
+    public UserOutputDto createUser(@RequestBody UserCreationDTO userCreationDTO) {
         log.info("POST request to create {} received.", userCreationDTO);
         UserOutputDto createdUser = userService.createUser(userCreationDTO);
         log.info("{} was created", userCreationDTO);
@@ -40,7 +39,8 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public UserOutputDto updateUser(@PathVariable("id") Integer id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
+    public UserOutputDto updateUser(@PathVariable("id") Integer id,
+                                    @RequestBody UserUpdateDto userUpdateDto) {
         log.info("PATCH request to update user_id={} received.", id);
         return userService.updateUser(id, userUpdateDto);
     }

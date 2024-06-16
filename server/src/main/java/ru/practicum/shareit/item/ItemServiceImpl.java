@@ -24,7 +24,6 @@ import ru.practicum.shareit.request.dao.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.UserRepository;
 
-import javax.validation.Valid;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -121,7 +120,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public CommentOutputDto saveComment(Integer commentatorId, Integer itemId, @Valid CommentCreationDto commentCreationDto) {
+    public CommentOutputDto saveComment(Integer commentatorId, Integer itemId, CommentCreationDto commentCreationDto) {
         Item item = itemStorage.findById(itemId).orElseThrow(() ->
                 new ItemNotFoundException(MessageFormat.format("Item with id={0} not found", itemId))
         );
